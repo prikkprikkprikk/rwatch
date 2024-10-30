@@ -1,10 +1,9 @@
 {
   "name": "prikkprikkprikk/dwatch",
   "description": "Simplifies the process of starting 'npm run watch' on our dev server.",
-  "version": "0.0.1",
   "type": "project",
   "minimum-stability": "stable",
-  "license": "GPL-3.0",
+  "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "prikkprikkprikk",
