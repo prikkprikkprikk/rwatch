@@ -1,0 +1,7 @@
+{
+  "main": "src/dwatch.php",
+  "output": "dwatch",
+  "directories": [
+    "src"
+  ]
+}

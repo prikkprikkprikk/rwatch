@@ -1,0 +1,34 @@
+{
+  "name": "prikkprikkprikk/dwatch",
+  "description": "Simplifies the process of starting 'npm run watch' on our dev server.",
+  "version": "0.0.1",
+  "type": "project",
+  "minimum-stability": "stable",
+  "license": "GPL-3.0",
+  "authors": [
+    {
+      "name": "prikkprikkprikk",
+      "email": "jorn@prikkprikkprikk.no"
+    }
+  ],
+  "scripts": {
+    "test": "vendor/bin/pest"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dwatch\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^8.3",
+    "laravel/prompts": "^0.3.1"
+  },
+  "require-dev": {
+    "pestphp/pest": "^3.5"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
