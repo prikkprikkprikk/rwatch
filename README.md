@@ -50,6 +50,7 @@ composer test
 - [ ] Prompt the user for the server and username if they are not supplied
 - [ ] Other ways to supply a list of projects (e.g. specifying a directory of projects)
 - [ ] Command line option to specify the project (skips the interactive selection)
+- [ ] Cache the list of projects, create a command line option to refresh the cache
 
 ## Contributing
 
