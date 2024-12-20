@@ -3,29 +3,28 @@ declare(strict_types=1);
 
 namespace Dwatch\Config;
 
-class Config {
+use Dwatch\CommandLineOptions\CommandLineOptions;
 
-    private const DEFAULT_CONFIG_DIR = '~/.config/dwatch';
-    private const DEFAULT_CONFIG_FILE = 'dwatch.php';
+class Config implements ConfigInterface {
+
+    private ConfigFilePath $configFilePath;
 
     private array $config = [
-        'server' => '',
-        'username' => '',
+        'server' => null,
+        'username' => null,
+        'project' => null,
     ];
 
-    public function __construct(
-        protected string $configDir = self::DEFAULT_CONFIG_DIR,
-        protected string $configFile = self::DEFAULT_CONFIG_FILE,
-    ){
-        $this->ensureConfigDirAndFileExist();
+    public function __construct(ConfigFilePath $configFilePath) {
+        $this->configFilePath = $configFilePath ?? ConfigFilePath::getDefaultConfigFilePath();
     }
 
     protected function ensureConfigDirAndFileExist(): void
     {
-        if (!file_exists($this->configDir)) {
-            mkdir($this->configDir, 0755, true);
+        if (!file_exists($this->configFilePath->directory())) {
+            mkdir($this->configFilePath->directory(), 0755, true);
         }
-        if (!file_exists($this->fullConfigFilePath())) {
+            if (!file_exists($this->configFilePath->fullPath())) {
             // Save empty config values to new file
             $this->saveConfig();
         }
@@ -38,29 +37,49 @@ class Config {
 
     public function saveConfig(): void {
         file_put_contents(
-            $this->fullConfigFilePath(),
+            $this->configFilePath->fullPath(),
             json_encode($this->config, JSON_PRETTY_PRINT)
         );
     }
 
-    protected function fullConfigFilePath(): string
-    {
-        return $this->configDir . '/' . $this->configFile;
-    }
-
-    public function setServer(mixed $server): void {
+    public function setServer(string $server): void {
         $this->config['server'] = $server;
     }
 
-    public function setUsername(mixed $username): void {
+    public function setUsername(string $username): void {
         $this->config['username'] = $username;
     }
 
-    public function getServer() {
+    public function getServer(): string {
         return $this->config['server'];
     }
 
-    public function getUsername() {
+    public function getUsername(): string {
         return $this->config['username'];
+    }
+
+    public function getProject() {
+        return $this->config['project'];
+    }
+
+    /**
+     * Checks if all required configs are present, either as command line arguments or in the config file.
+     */
+    private function checkForConfigs(): void {
+        $commandLineOptions = CommandLineOptions::getInstance();
+        foreach ($this->config as $configKey) {
+            $this->config[$configKey] = $commandLineOptions->getOption($configKey);
+        }
+        // If all configs are not set, check for the config file
+        // if (array_sum(array_map(callback: function ($value) {
+        //     return $value !== null;
+        // }, array: $this->config)) === 0) {
+        //     $this->loadConfigFromFile();
+        // }
+    }
+
+    public function getProjects(): array {
+        // TODO: Implement getProjects() method.
+        return [];
     }
 }

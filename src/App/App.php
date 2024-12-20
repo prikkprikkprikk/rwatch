@@ -2,33 +2,43 @@
 
 namespace Dwatch\App;
 
+use Dwatch\CommandLineOptions\CommandLineOptions;
 use Dwatch\Config\Config;
+use Dwatch\Config\ConfigFilePath;
 use function Laravel\Prompts\select;
 
 class App {
 
-    public function __construct(
-        protected Config $config = new Config()
-    ) {
+    protected CommandLineOptions $options;
+    protected Config $config;
+
+    public function __construct() {
+        $this->config = new Config(ConfigFilePath::getDefaultConfigFilePath());
     }
 
     public function run() {
         // For now, we only support supplying the server and username as arguments
         // Get options from command line
-        $options =getopt('', ['server:', 'username:']);
+        $options = CommandLineOptions::getInstance([
+            'server' => '/^[\w.-]+$/', // Allows letters, numbers, dots, and hyphens
+            'username' => '/^[\w_-]+$/', // Allows letters, numbers, hyphens and underscores
+            'project' => '/^[\w_-]+$/', // Allows letters, numbers, hyphens and underscores
+        ]);
+        $server = $options->getOption('server');
+        $username = $options->getOption('username');
 
-        if (!isset($options['server']) || !isset($options['username'])) {
-            if (!isset($options['server'])) {
+        if (!isset($server) || !isset($username)) {
+            if (!isset($server)) {
                 echo "Mangler argumentet --server\n";
             }
-            if (!isset($options['username'])) {
+            if (!isset($username)) {
                 echo "Mangler argumentet --username\n";
             }
             exit(1);
         }
 
-        $this->config->setServer($options['server']);
-        $this->config->setUsername($options['username']);
+        $this->config->setServer($server);
+        $this->config->setUsername($username);
 
         // Get symlinks from remote server
         $command = sprintf(
