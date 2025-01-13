@@ -4,5 +4,5 @@ declare(strict_types=1);
 namespace Dwatch\CommandLineOptions;
 
 interface CommandLineOptionsInterface {
-    public function getOption(string $option);
+    public function getOption(string $option): ?string;
 }

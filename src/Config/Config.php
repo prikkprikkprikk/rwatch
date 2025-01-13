@@ -9,6 +9,7 @@ class Config implements ConfigInterface {
 
     private ConfigFilePath $configFilePath;
 
+    /** @var array<string, string|null> */
     private array $config = [
         'server' => null,
         'username' => null,
@@ -16,18 +17,7 @@ class Config implements ConfigInterface {
     ];
 
     public function __construct(ConfigFilePath $configFilePath) {
-        $this->configFilePath = $configFilePath ?? ConfigFilePath::getDefaultConfigFilePath();
-    }
-
-    protected function ensureConfigDirAndFileExist(): void
-    {
-        if (!file_exists($this->configFilePath->directory())) {
-            mkdir($this->configFilePath->directory(), 0755, true);
-        }
-            if (!file_exists($this->configFilePath->fullPath())) {
-            // Save empty config values to new file
-            $this->saveConfig();
-        }
+        $this->configFilePath = $configFilePath;
     }
 
     public function shouldPromptUser(): bool
@@ -58,25 +48,25 @@ class Config implements ConfigInterface {
         return $this->config['username'];
     }
 
-    public function getProject() {
+    public function getProject(): ?string {
         return $this->config['project'];
     }
 
     /**
      * Checks if all required configs are present, either as command line arguments or in the config file.
      */
-    private function checkForConfigs(): void {
-        $commandLineOptions = CommandLineOptions::getInstance();
-        foreach ($this->config as $configKey) {
-            $this->config[$configKey] = $commandLineOptions->getOption($configKey);
-        }
-        // If all configs are not set, check for the config file
-        // if (array_sum(array_map(callback: function ($value) {
-        //     return $value !== null;
-        // }, array: $this->config)) === 0) {
-        //     $this->loadConfigFromFile();
-        // }
-    }
+    // private function checkForConfigs(): void {
+    //     $commandLineOptions = CommandLineOptions::getInstance();
+    //     foreach ($this->config as $configKey) {
+    //         $this->config[$configKey] = $commandLineOptions->getOption($configKey);
+    //     }
+    //     // If all configs are not set, check for the config file
+    //     // if (array_sum(array_map(callback: function ($value) {
+    //     //     return $value !== null;
+    //     // }, array: $this->config)) === 0) {
+    //     //     $this->loadConfigFromFile();
+    //     // }
+    // }
 
     public function getProjects(): array {
         // TODO: Implement getProjects() method.

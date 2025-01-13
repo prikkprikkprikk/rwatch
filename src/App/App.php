@@ -18,7 +18,7 @@ class App {
         $this->config = new Config(ConfigFilePath::getDefaultConfigFilePath());
     }
 
-    public function run() {
+    public function run(): void {
         // For now, we only support supplying the server and username as arguments
         // Get options from command line
         $options = CommandLineOptions::getInstance([

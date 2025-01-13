@@ -8,12 +8,20 @@ use Symfony\Component\Console\Exception\InvalidOptionException;
 class CommandLineOptions implements CommandLineOptionsInterface {
 
     private static ?self $instance = null;
+
+    /** @var array<string, string|null> */
     protected array $options = [];
 
+    /**
+     * @param array<string, string|null> $optionsWithPatterns
+     */
     private function __construct(
         private readonly array $optionsWithPatterns = []
     ) {}
 
+    /**
+     * @param array<string, string|null> $optionsWithPatterns
+     */
     public static function getInstance(array $optionsWithPatterns = []): CommandLineOptionsInterface {
         if (self::$instance === null) {
             self::$instance = new self($optionsWithPatterns);
@@ -26,7 +34,7 @@ class CommandLineOptions implements CommandLineOptionsInterface {
         return self::$instance;
     }
 
-    public function getOption(string $option) {
+    public function getOption(string $option): ?string {
         return $this->options[$option] ?? null;
     }
 
