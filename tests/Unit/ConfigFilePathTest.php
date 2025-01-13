@@ -50,12 +50,12 @@ it('returns correct full path', function() {
 
 it('returns correct directory', function() {
     $config = new ConfigFilePath($this->tempDir, 'config.json');
-    expect($config->directory())->toBe($this->tempDir);
+    expect($config->directory)->toBe($this->tempDir);
 });
 
 it('returns correct filename', function() {
     $config = new ConfigFilePath($this->tempDir, 'config.json');
-    expect($config->filename())->toBe('config.json');
+    expect($config->filename)->toBe('config.json');
 });
 
 it('normalizes path with double slashes', function() {
@@ -139,6 +139,6 @@ it('creates a default config file path', function () {
     $config = ConfigFilePath::getDefaultConfigFilePath();
 
     // Assert ---------------------------------------------------------------------------------
-    expect($config->directory())->toBe(getenv('HOME') . str_replace('~', '', ConfigFilePath::DEFAULT_DIRECTORY));
-    expect($config->filename())->toBe(ConfigFilePath::DEFAULT_FILENAME);
+    expect($config->directory)->toBe(getenv('HOME') . str_replace('~', '', ConfigFilePath::DEFAULT_DIRECTORY));
+    expect($config->filename)->toBe(ConfigFilePath::DEFAULT_FILENAME);
 });

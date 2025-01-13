@@ -32,16 +32,18 @@ class ConfigFilePath
     public const string DEFAULT_FILENAME = 'config.json';
     public const string DEFAULT_DIRECTORY = '~/.config/dwatch';
 
-    private string $directory;
-    private string $filename;
+    private(set) string $directory;
+    private(set) ?string $filename = null;
+
     private Filesystem $filesystem;
 
-    public static function getDefaultConfigFilePath(): self {
+    public static function getDefaultConfigFilePath(): self
+    {
         return new self(self::DEFAULT_DIRECTORY, self::DEFAULT_FILENAME);
     }
 
-    public function __construct( string $path, ?string $filename = null ) {
-
+    public function __construct( string $path, ?string $filename = null )
+    {
         $this->filesystem = new Filesystem();
 
         $path = $this->expandHomeDirectory($path);
@@ -63,7 +65,8 @@ class ConfigFilePath
      * @return void
      * @throws WrongFileFormatException
      */
-    private function validatePath(): void {
+    private function validatePath(): void
+    {
         if (!$this->isJsonFile()) {
             throw new WrongFileFormatException('Config file is not a JSON file');
         }
@@ -77,7 +80,8 @@ class ConfigFilePath
      *
      * @return bool
      */
-    private function isJsonFile(): bool {
+    private function isJsonFile(): bool
+    {
         return Path::getExtension($this->fullPath()) === 'json';
     }
 
@@ -86,7 +90,8 @@ class ConfigFilePath
      *
      * @return string
      */
-    public function fullPath(): string {
+    public function fullPath(): string
+    {
         return Path::normalize($this->directory . '/' . $this->filename);
     }
 
@@ -95,7 +100,8 @@ class ConfigFilePath
      *
      * @return bool
      */
-    public function directoryExists(): bool {
+    public function directoryExists(): bool
+    {
         return $this->filesystem->exists($this->directory);
     }
 
@@ -104,7 +110,8 @@ class ConfigFilePath
      *
      * @return bool
      */
-    public function fileExists(): bool {
+    public function fileExists(): bool
+    {
         return $this->filesystem->exists($this->fullPath());
     }
 
@@ -114,7 +121,8 @@ class ConfigFilePath
      * @param string $path
      * @return string
      */
-    private function expandHomeDirectory(string $path): string {
+    private function expandHomeDirectory(string $path): string
+    {
         if (Path::isAbsolute($path)) {
             return $path;
         }
@@ -125,29 +133,12 @@ class ConfigFilePath
     }
 
     /**
-     * Returns the file name of the config file.
-     *
-     * @return string
-     */
-    public function filename(): string {
-        return $this->filename;
-    }
-
-    /**
-     * Returns the directory of the config file.
-     *
-     * @return string
-     */
-    public function directory(): string {
-        return $this->directory;
-    }
-
-    /**
      * Whether the config file is readable.
      *
      * @return bool
      */
-    public function fileIsReadable(): bool {
+    public function fileIsReadable(): bool
+    {
         return $this->fileExists()
             && is_readable($this->directory);
     }
@@ -157,7 +148,8 @@ class ConfigFilePath
      *
      * @return bool
      */
-    public function directoryIsWritable(): bool {
+    public function directoryIsWritable(): bool
+    {
         return $this->filesystem->exists($this->directory)
             && is_writable($this->directory);
     }
