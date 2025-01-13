@@ -5,6 +5,8 @@ namespace Dwatch\App;
 use Dwatch\CommandLineOptions\CommandLineOptions;
 use Dwatch\Config\Config;
 use Dwatch\Config\ConfigFilePath;
+use Dwatch\Screen\Screen;
+use function Laravel\Prompts\pause;
 use function Laravel\Prompts\select;
 
 class App {
@@ -26,6 +28,16 @@ class App {
         ]);
         $server = $options->getOption('server');
         $username = $options->getOption('username');
+
+        if (!isset($server) && !isset($username)) {
+            $screen = new Screen();
+            $screen->enter();
+            echo "Mangler argumentene --server og --username\n";
+            // Prompt user to press enter to exit using Laravel Prompts
+            pause('Trykk enter for å avslutte');
+            $screen->exit();
+            exit(0);
+        }
 
         if (!isset($server) || !isset($username)) {
             if (!isset($server)) {
