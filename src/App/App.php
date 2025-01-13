@@ -67,7 +67,7 @@ class App {
 
         // Parse the output into array and clean up paths
         $options = array_filter(explode("\n", trim($output)));
-        $options = array_map(function($path) {
+        $options = array_map(function($path): string {
             // Remove './' from the beginning of the path
             return preg_replace('/^\.\//', '', $path);
         }, $options);
@@ -82,7 +82,7 @@ class App {
         $options[] = $quitLabel;
 
         // Show interactive selection
-        $selected = select(
+        $selected = (string) select(
             label: "Velg prosjekt for kjøring av 'npm run watch' på ". $this->config->getServer() .":",
             options: $options,
             scroll: 10,

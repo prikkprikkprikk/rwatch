@@ -71,7 +71,11 @@ class ConfigFilePath
             throw new WrongFileFormatException('Config file is not a JSON file');
         }
         if ($this->fileExists()) {
-            $this->directory = realpath($this->directory);
+            $directory = realpath($this->directory);
+            if ($directory === false) {
+                throw new \RuntimeException('Could not determine real path of directory');
+            }
+            $this->directory = $directory;
         }
     }
 
@@ -120,6 +124,7 @@ class ConfigFilePath
      *
      * @param string $path
      * @return string
+     * @throws \RuntimeException
      */
     private function expandHomeDirectory(string $path): string
     {
@@ -127,7 +132,11 @@ class ConfigFilePath
             return $path;
         }
         if (str_starts_with($path, '~/')) {
-            return Path::join(getenv('HOME'), substr($path, 2));
+            $homeDirectory = getenv('HOME');
+            if ($homeDirectory === false) {
+                throw new \RuntimeException('Could not determine home directory');
+            }
+            return Path::join($homeDirectory, substr($path, 2));
         }
         return $path;
     }

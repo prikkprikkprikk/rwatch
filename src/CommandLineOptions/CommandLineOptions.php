@@ -9,7 +9,7 @@ class CommandLineOptions implements CommandLineOptionsInterface {
 
     private static ?self $instance = null;
 
-    /** @var array<string, string|null> */
+    /** @var array<string, mixed> */
     protected array $options = [];
 
     /**
@@ -34,6 +34,9 @@ class CommandLineOptions implements CommandLineOptionsInterface {
         return self::$instance;
     }
 
+    /**
+     * @return string|null
+     */
     public function getOption(string $option): ?string {
         return $this->options[$option] ?? null;
     }
