@@ -5,7 +5,7 @@ namespace Dwatch\CommandLineOptions {
     // We need to mock the function getopt() to test the CommandLineOptions class
     // without actually running the command line.
     // Mockery does not support mocking built-in functions, so we need to use this workaround.
-    function getopt(string $options = "", array $longopts = null): array {
+    function getopt(?string $short_options = "", ?array $long_options = null): array {
         return [
             'server' => 'localhost',
             'username' => 'testuser',

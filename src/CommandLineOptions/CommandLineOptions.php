@@ -22,7 +22,7 @@ class CommandLineOptions implements CommandLineOptionsInterface {
             return "$option:";
         }, array: array_keys(self::$instance->optionsWithPatterns));
         self::$instance->validateOptions();
-        self::$instance->options = getopt('', $options);
+        self::$instance->options = getopt(short_options: '', long_options: $options);
         return self::$instance;
     }
 
