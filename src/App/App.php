@@ -3,6 +3,7 @@
 namespace Dwatch\App;
 
 use Dwatch\CommandLineOptions\CommandLineOptions;
+use Dwatch\CommandLineOptions\CommandLineOptionsInterface;
 use Dwatch\Config\Config;
 use Dwatch\Config\ConfigFilePath;
 use Dwatch\Screen\Screen;
@@ -11,7 +12,7 @@ use function Laravel\Prompts\select;
 
 class App {
 
-    protected CommandLineOptions $options;
+    protected CommandLineOptionsInterface $options;
     protected Config $config;
 
     public function __construct() {
@@ -21,13 +22,13 @@ class App {
     public function run(): void {
         // For now, we only support supplying the server and username as arguments
         // Get options from command line
-        $options = CommandLineOptions::getInstance([
+        $this->options = CommandLineOptions::getInstance([
             'server' => '/^[\w.-]+$/', // Allows letters, numbers, dots, and hyphens
             'username' => '/^[\w_-]+$/', // Allows letters, numbers, hyphens and underscores
             'project' => '/^[\w_-]+$/', // Allows letters, numbers, hyphens and underscores
         ]);
-        $server = $options->getOption('server');
-        $username = $options->getOption('username');
+        $server = $this->options->getOption('server');
+        $username = $this->options->getOption('username');
 
         if (!isset($server) && !isset($username)) {
             $screen = new Screen();
@@ -66,25 +67,25 @@ class App {
         }
 
         // Parse the output into array and clean up paths
-        $options = array_filter(explode("\n", trim($output)));
-        $options = array_map(function($path): string {
+        $projects = array_filter(explode("\n", trim($output)));
+        $projects = array_map(function($path): string {
             // Remove './' from the beginning of the path
-            return preg_replace('/^\.\//', '', $path);
-        }, $options);
+            return preg_replace('/^\.\//', '', $path) ?? '';
+        }, $projects);
 
-        if (empty($options)) {
+        if (empty($projects)) {
             echo "Fant ingen symlinker på serveren\n";
             exit(1);
         }
 
         // Add quit option
         $quitLabel = '❌ Avslutt';
-        $options[] = $quitLabel;
+        $projects[] = $quitLabel;
 
         // Show interactive selection
         $selected = (string) select(
             label: "Velg prosjekt for kjøring av 'npm run watch' på ". $this->config->getServer() .":",
-            options: $options,
+            options: $projects,
             scroll: 10,
         );
 

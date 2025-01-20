@@ -40,11 +40,11 @@ class Config implements ConfigInterface {
         $this->config['username'] = $username;
     }
 
-    public function getServer(): string {
+    public function getServer(): string|null {
         return $this->config['server'];
     }
 
-    public function getUsername(): string {
+    public function getUsername(): string|null {
         return $this->config['username'];
     }
 
