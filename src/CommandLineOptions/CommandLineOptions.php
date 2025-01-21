@@ -38,12 +38,16 @@ class CommandLineOptions implements CommandLineOptionsInterface {
      * @return string|null
      */
     public function getOption(string $option): ?string {
-        return $this->options[$option] ?? null;
+        $value = $this->options[$option] ?? null;
+        return is_string($value) ? $value : null;
     }
 
     public function validateOptions(): void {
         foreach ($this->options as $option => $value) {
             $pattern = $this->optionsWithPatterns[$option] ?? null;
+            if (!is_string($value)) {
+                continue;
+            }
             if ($pattern && !preg_match($pattern, $value)) {
                 throw new InvalidOptionException(
                     sprintf("Invalid value for option '%s': %s", $option, $value)

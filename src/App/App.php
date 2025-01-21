@@ -22,11 +22,13 @@ class App {
     public function run(): void {
         // For now, we only support supplying the server and username as arguments
         // Get options from command line
-        $this->options = CommandLineOptions::getInstance([
+        /* @var array<string, string|null> $commandLineOptions */
+        $commandLineOptions = [
             'server' => '/^[\w.-]+$/', // Allows letters, numbers, dots, and hyphens
             'username' => '/^[\w_-]+$/', // Allows letters, numbers, hyphens and underscores
             'project' => '/^[\w_-]+$/', // Allows letters, numbers, hyphens and underscores
-        ]);
+        ];
+        $this->options = CommandLineOptions::getInstance($commandLineOptions);
         $server = $this->options->getOption('server');
         $username = $this->options->getOption('username');
 
