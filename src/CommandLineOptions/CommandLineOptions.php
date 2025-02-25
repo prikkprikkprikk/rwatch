@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Dwatch\CommandLineOptions;
+namespace RWatch\CommandLineOptions;
 
 use Symfony\Component\Console\Exception\InvalidOptionException;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Dwatch\App;
+namespace RWatch\App;
 
-use Dwatch\CommandLineOptions\CommandLineOptions;
-use Dwatch\CommandLineOptions\CommandLineOptionsInterface;
-use Dwatch\Config\Config;
-use Dwatch\Config\ConfigFilePath;
-use Dwatch\Screen\Screen;
+use RWatch\CommandLineOptions\CommandLineOptions;
+use RWatch\CommandLineOptions\CommandLineOptionsInterface;
+use RWatch\Config\Config;
+use RWatch\Config\ConfigFilePath;
+use RWatch\Screen\Screen;
 use function Laravel\Prompts\pause;
 use function Laravel\Prompts\select;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dwatch\Project;
+namespace RWatch\Project;
 
 interface ProjectsProviderInterface
 {

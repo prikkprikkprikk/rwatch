@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+[2025-02-01]
+- Renamed the project from `dwatch` ("devserver watch") to `rwatch` ("remote watch").
+- Removed box due to incompatibility with PHP 8.4.
+- Refactored the code to comply with PhpStan level max.
 
 [2024-11-20]
 Moved the project from Github to CoreTrek's Gitlab, as this project is specific to our developers' needs.
@@ -16,7 +19,3 @@ Added:
 - PHP_CodeSniffer composer package
 - PHPStan composer package
 - CHANGELOG.md (this file)
-
-### ToDo
-
-Add earlier commits/changes from the old GitHub repo here.

@@ -1,7 +1,7 @@
 <?php
 
-use Dwatch\Project\ProjectsProviderInterface;
-use Dwatch\Project\Project;
+use RWatch\Project\ProjectsProviderInterface;
+use RWatch\Project\Project;
 
 test('ProjectsProvider returns array of Project objects', function () {
     $provider = new class implements ProjectsProviderInterface {

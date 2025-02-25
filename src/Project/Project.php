@@ -1,6 +1,6 @@
 <?php
 
-namespace Dwatch\Project;
+namespace RWatch\Project;
 
 /**
  * Project class.

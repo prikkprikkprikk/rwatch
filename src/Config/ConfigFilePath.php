@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Dwatch\Config;
+namespace RWatch\Config;
 
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Filesystem\Filesystem;
-use Dwatch\Config\Exception\WrongFileFormatException;
+use RWatch\Config\Exception\WrongFileFormatException;
 
 /**
  * Class ConfigFilePath
@@ -30,7 +30,7 @@ use Dwatch\Config\Exception\WrongFileFormatException;
 class ConfigFilePath
 {
     public const string DEFAULT_FILENAME = 'config.json';
-    public const string DEFAULT_DIRECTORY = '~/.config/dwatch';
+    public const string DEFAULT_DIRECTORY = '~/.config/rwatch';
 
     private(set) string $directory;
     private(set) ?string $filename = null;

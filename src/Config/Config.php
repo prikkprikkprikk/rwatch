@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Dwatch\Config;
+namespace RWatch\Config;
 
-use Dwatch\CommandLineOptions\CommandLineOptions;
+use RWatch\CommandLineOptions\CommandLineOptions;
 
 class Config implements ConfigInterface {
 

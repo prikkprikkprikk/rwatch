@@ -1,11 +1,11 @@
 <?php
 
-use Dwatch\Config\Config;
-use Dwatch\Config\ConfigFilePath;
+use RWatch\Config\Config;
+use RWatch\Config\ConfigFilePath;
 
 beforeEach(function ()
 {
-    $this->configDir = '/tmp/dwatch';
+    $this->configDir = '/tmp/rwatch';
     $this->configFile = 'config.json';
     $this->configFilePath = new ConfigFilePath($this->configDir, $this->configFile);
 });

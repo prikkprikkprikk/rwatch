@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Dwatch\CommandLineOptions;
+namespace RWatch\CommandLineOptions;
 
 interface CommandLineOptionsInterface {
     public function getOption(string $option): ?string;

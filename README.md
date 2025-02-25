@@ -1,4 +1,4 @@
-# dwatch
+# RWatch
 
 A simple CLI tool to simplify the process of starting `npm run watch` for my projects on our dev server.
 
@@ -18,15 +18,17 @@ In the future, I will add support for using a config file, and prompt the user f
 composer install
 ```
 
-To create the phar file, first install Box as per their [documentation](https://box-project.github.io/box/installation/).
+## Building the executable phar file
 
-Then run:
+_**NOTE:** This is not yet implemented. In the mean time, the script may be executed with `src/rwatch.php`._
+
+To create the phar file:
 
 ```bash
-box compile
+composer build
 ```
 
-This will generate an executable .phar file named `dwatch` (note the omitted extension) in the project root.
+This will generate an executable .phar file named `rwatch` (note the omitted extension) in the project root.
 
 You can then move the file to your PATH.
 
@@ -35,7 +37,7 @@ You can then move the file to your PATH.
 Assuming the file is in your PATH, you can run it like this:
 
 ```bash
-dwatch --server=server.example.com --username=johndoe
+rwatch --server=server.example.com --username=johndoe
 ```
 
 ## Testing

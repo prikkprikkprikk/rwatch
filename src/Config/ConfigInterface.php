@@ -1,6 +1,6 @@
 <?php
 
-namespace Dwatch\Config;
+namespace RWatch\Config;
 
 interface ConfigInterface {
     public function getServer(): string|null;

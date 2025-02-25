@@ -1,6 +1,6 @@
 <?php
 
-namespace Dwatch\Config\Exception;
+namespace RWatch\Config\Exception;
 
 class WrongFileFormatException extends \Exception
 {}

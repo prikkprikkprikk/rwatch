@@ -1,7 +1,7 @@
 <?php
 
-use Dwatch\Config\ConfigFilePath;
-use Dwatch\Config\Exception\WrongFileFormatException;
+use RWatch\Config\ConfigFilePath;
+use RWatch\Config\Exception\WrongFileFormatException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 

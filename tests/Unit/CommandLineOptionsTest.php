@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Dwatch\CommandLineOptions {
+namespace RWatch\CommandLineOptions {
     // We need to mock the function getopt() to test the CommandLineOptions class
     // without actually running the command line.
     // Mockery does not support mocking built-in functions, so we need to use this workaround.
@@ -16,8 +16,8 @@ namespace Dwatch\CommandLineOptions {
 
 namespace Tests\Unit {
 
-    use Dwatch\CommandLineOptions\CommandLineOptionsInterface;
-    use Dwatch\CommandLineOptions\CommandLineOptions;
+    use RWatch\CommandLineOptions\CommandLineOptionsInterface;
+    use RWatch\CommandLineOptions\CommandLineOptions;
 
     it('can get options from command line', function ()
     {

@@ -1,6 +1,6 @@
 <?php
 
-use Dwatch\Project\Project;
+use RWatch\Project\Project;
 
 test('Project can be created with valid absolute path', function () {
     $project = new Project(path: '/var/www/projects/my-project', name: 'my-project');

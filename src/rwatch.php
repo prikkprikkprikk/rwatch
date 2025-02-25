@@ -2,7 +2,7 @@
 <?php
 declare(strict_types=1);
 
-use Dwatch\App\App;
+use RWatch\App\App;
 
 require __DIR__ . '/../vendor/autoload.php';
 

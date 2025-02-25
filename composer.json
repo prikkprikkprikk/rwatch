@@ -1,6 +1,6 @@
 {
-  "name": "prikkprikkprikk/dwatch",
-  "description": "Simplifies the process of starting 'npm run watch' on our dev server.",
+  "name": "prikkprikkprikk/rwatch",
+  "description": "Simplifies the process of logging into a remote server and starting 'npm run watch' on a project.",
   "type": "project",
   "minimum-stability": "stable",
   "license": "GPL-3.0-or-later",
@@ -11,22 +11,23 @@
     }
   ],
   "scripts": {
-    "test": "vendor/bin/pest; vendor/bin/phpstan analyse"
+    "test": "vendor/bin/pest; vendor/bin/phpstan analyse",
+    "build": "php -d phar.readonly=0 build-phar.php"
   },
   "autoload": {
     "psr-4": {
-      "Dwatch\\": "src/"
+      "RWatch\\": "src/"
     }
   },
   "require": {
     "php": "^8.4",
-    "laravel/prompts": "^0.3.1",
-    "symfony/filesystem": "^7.1"
+    "laravel/prompts": "^0.3.4",
+    "symfony/filesystem": "^7.2"
   },
   "require-dev": {
-    "pestphp/pest": "^3.5",
-    "phpstan/phpstan": "^2.0",
-    "squizlabs/php_codesniffer": "^3.11"
+    "pestphp/pest": "^3.7.4",
+    "phpstan/phpstan": "^2.1.2",
+    "squizlabs/php_codesniffer": "^3.11.3"
   },
   "config": {
     "allow-plugins": {

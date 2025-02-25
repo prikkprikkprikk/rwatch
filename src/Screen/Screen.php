@@ -1,6 +1,6 @@
 <?php
 
-namespace Dwatch\Screen;
+namespace RWatch\Screen;
 
 class Screen
 {
