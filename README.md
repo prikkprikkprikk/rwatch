@@ -6,11 +6,13 @@ It gets a list of all symlinks in the user's home directory on the server and pr
 
 It then uses SSH to start `npm run watch` on the selected project.
 
-Created as a phar file with [Box Project](https://box-project.github.io/).
-
 Currently only supports using command line arguments to supply the server and username.
 
 In the future, I will add support for using a config file, and prompt the user for the server and username if they are not supplied.
+
+## Requirements
+
+- PHP 8.4
 
 ## Installation
 
@@ -18,14 +20,12 @@ In the future, I will add support for using a config file, and prompt the user f
 composer install
 ```
 
-## Building the executable phar file
+## Building the executable
 
-_**NOTE:** This is not yet implemented. In the mean time, the script may be executed with `src/rwatch.php`._
-
-To create the phar file:
+To create the standalone executable PHAR file, you first need to install [Box] 
 
 ```bash
-composer build
+box compile
 ```
 
 This will generate an executable .phar file named `rwatch` (note the omitted extension) in the project root.

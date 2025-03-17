@@ -1,0 +1,8 @@
+{
+  "main": "src/rwatch.php",
+  "output": "rwatch",
+  "directories": [
+    "src"
+  ],
+  "force-autodiscovery": true
+}

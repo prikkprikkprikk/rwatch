@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+[2025-03-17]
+- Updated everything.
+- Added box back in again.
+
 [2025-02-01]
 - Renamed the project from `dwatch` ("devserver watch") to `rwatch` ("remote watch").
 - Removed box due to incompatibility with PHP 8.4.
