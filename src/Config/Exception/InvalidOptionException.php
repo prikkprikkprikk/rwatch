@@ -4,5 +4,6 @@ declare(strict_types=1);
 
 namespace RWatch\Config\Exception;
 
-class WrongFileFormatException extends \Exception
-{}
+class InvalidOptionException extends \Exception {
+
+}

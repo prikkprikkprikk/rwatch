@@ -19,6 +19,7 @@ class ConsoleIO implements IOInterface {
      */
     public function ask(string $question): string {
         // TODO: Implement ask() method.
+        return '';
     }
 
     /**
@@ -26,6 +27,7 @@ class ConsoleIO implements IOInterface {
      */
     public function select(string $question, array $choices): string {
         // TODO: Implement select() method.
+        return '';
     }
 
     /**

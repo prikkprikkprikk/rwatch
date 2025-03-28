@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace RWatch\Command;
+use RWatch\App\App;
 use RWatch\IO\IOInterface;
 
 class CreateConfigFilePromptCommand implements CommandInterface {
@@ -15,7 +16,7 @@ class CreateConfigFilePromptCommand implements CommandInterface {
         $reply = $io->confirm('Create config file? (y/n)');
 
         if ($reply) {
-            return new AskForServerNameCommand();
+            return new AskForServerNameCommand(App::getConfig());
         }
 
         return null;

@@ -15,10 +15,19 @@ use function Laravel\Prompts\select;
 class App {
 
     protected CommandLineOptionsInterface $options;
-    protected Config $config;
+    protected static Config $config;
 
     public function __construct() {
-        $this->config = new Config(ConfigFilePath::getDefaultConfigFilePath());
+    }
+
+    /**
+     * @return Config
+     */
+    public static function getConfig(): Config {
+        if (!isset(self::$config)) {
+            self::$config = new Config();
+        }
+        return self::$config;
     }
 
     public function run(): void {
@@ -66,14 +75,14 @@ class App {
             exit(1);
         }
 
-        $this->config->setServer($server);
-        $this->config->setUsername($username);
+        App::getConfig()->setServer($server);
+        App::getConfig()->setUsername($username);
 
         // Get symlinks from remote server
         $command = sprintf(
             'ssh %s@%s "ls -F | grep @ | sed \'s/@//\'"',
-            $this->config->getUsername(),
-            $this->config->getServer()
+            App::getConfig()->getUsername(),
+            App::getConfig()->getServer()
         );
         $output = shell_exec($command);
 
@@ -100,7 +109,7 @@ class App {
 
         // Show interactive selection
         $selected = (string) select(
-            label: "Velg prosjekt for kjøring av 'npm run watch' på ". $this->config->getServer() .":",
+            label: "Velg prosjekt for kjøring av 'npm run watch' på ". App::getConfig()->getServer() .":",
             options: $projects,
             scroll: 10,
         );
@@ -116,8 +125,8 @@ class App {
         // Using SSH with pseudo-terminal allocation (-t) and cd -P to resolve symlinks
         $sshStartCommand = sprintf(
             'ssh -t %s@%s "cd -P ~/%s && pwd && npm run watch"',
-            $this->config->getUsername(),
-            $this->config->getServer(),
+            App::getConfig()->getUsername(),
+            App::getConfig()->getServer(),
             escapeshellarg($selected)
         );
 

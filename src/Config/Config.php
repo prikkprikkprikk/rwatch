@@ -3,33 +3,41 @@ declare(strict_types=1);
 
 namespace RWatch\Config;
 
-use RWatch\CommandLineOptions\CommandLineOptions;
-
 class Config implements ConfigInterface {
 
-    private ConfigFilePath $configFilePath;
-
-    /** @var array<string, string|null> */
+    /** @var array<string, ?string> */
     private array $config = [
         'server' => null,
         'username' => null,
         'project' => null,
     ];
 
-    public function __construct(ConfigFilePath $configFilePath) {
-        $this->configFilePath = $configFilePath;
+    /**
+     * @param array<string, ?string>|null $configArray
+     */
+    public function __construct(?array $configArray = null) {
+        if (is_array($configArray)) {
+            $this->fromArray($configArray);
+        }
     }
 
-    public function shouldPromptUser(): bool
-    {
-        return $this->config['server'] === '' || $this->config['username'] === '';
+    /**
+     * @param array<string, ?string> $configArray
+     * @return void
+     */
+    public function fromArray(array $configArray): void {
+        foreach (array_keys($this->config) as $setting) {
+            if (isset($configArray[$setting])) {
+                $this->config[$setting] = (string)$configArray[$setting];
+            }
+        }
     }
 
-    public function saveConfig(): void {
-        file_put_contents(
-            $this->configFilePath->fullPath(),
-            json_encode($this->config, JSON_PRETTY_PRINT)
-        );
+    /**
+     * @return array<string, ?string>
+     */
+    public function toArray(): array {
+        return $this->config;
     }
 
     public function setServer(string $server): void {
@@ -40,36 +48,15 @@ class Config implements ConfigInterface {
         $this->config['username'] = $username;
     }
 
-    public function getServer(): string|null {
+    public function getServer(): ?string {
         return $this->config['server'];
     }
 
-    public function getUsername(): string|null {
+    public function getUsername(): ?string {
         return $this->config['username'];
     }
 
     public function getProject(): ?string {
         return $this->config['project'];
-    }
-
-    /**
-     * Checks if all required configs are present, either as command line arguments or in the config file.
-     */
-    // private function checkForConfigs(): void {
-    //     $commandLineOptions = CommandLineOptions::getInstance();
-    //     foreach ($this->config as $configKey) {
-    //         $this->config[$configKey] = $commandLineOptions->getOption($configKey);
-    //     }
-    //     // If all configs are not set, check for the config file
-    //     // if (array_sum(array_map(callback: function ($value) {
-    //     //     return $value !== null;
-    //     // }, array: $this->config)) === 0) {
-    //     //     $this->loadConfigFromFile();
-    //     // }
-    // }
-
-    public function getProjects(): array {
-        // TODO: Implement getProjects() method.
-        return [];
     }
 }

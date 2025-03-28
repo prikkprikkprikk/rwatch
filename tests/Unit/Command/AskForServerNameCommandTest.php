@@ -9,5 +9,5 @@ it('updates the config with the given server name', function () {
 
     $config = new RWatch\Config\Config();
 
-    $command = new AskForServerNameCommand();
+    $command = new AskForServerNameCommand($config);
 });

@@ -35,7 +35,7 @@ class TestIO implements IOInterface {
      */
     public function select(string $question, array $choices): string {
         if (isset($this->cannedResponses[$question])) {
-            return $this->cannedResponses[$question];
+            return (string)$this->cannedResponses[$question];
         }
         return '';
     }
