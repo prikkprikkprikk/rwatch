@@ -2,10 +2,12 @@
 
 namespace RWatch\App;
 
+use RWatch\Command\CreateConfigFilePromptCommand;
 use RWatch\CommandLineOptions\CommandLineOptions;
 use RWatch\CommandLineOptions\CommandLineOptionsInterface;
 use RWatch\Config\Config;
 use RWatch\Config\ConfigFilePath;
+use RWatch\IO\ConsoleIO;
 use RWatch\Screen\Screen;
 use function Laravel\Prompts\pause;
 use function Laravel\Prompts\select;
@@ -20,6 +22,18 @@ class App {
     }
 
     public function run(): void {
+        $io = new ConsoleIO();
+
+        $command = new CreateConfigFilePromptCommand();
+
+        do {
+            $command = $command->execute($io);
+        } while ($command);
+
+        exit;
+    }
+
+    public function oldRun(): void {
         // For now, we only support supplying the server and username as arguments
         // Get options from command line
         /* @var array<string, string|null> $commandLineOptions */
