@@ -20,4 +20,6 @@ interface ConfigInterface {
     public function getUsername(): string|null;
 
     public function getProject(): string|null;
+
+    public function setProject(string $project): void;
 }

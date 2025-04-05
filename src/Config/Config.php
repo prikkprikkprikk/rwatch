@@ -28,7 +28,12 @@ class Config implements ConfigInterface {
     public function fromArray(array $configArray): void {
         foreach (array_keys($this->config) as $setting) {
             if (isset($configArray[$setting])) {
-                $this->config[$setting] = (string)$configArray[$setting];
+                if (is_string($configArray[$setting]) || is_numeric($configArray[$setting])) {
+                    $this->config[$setting] = (string)$configArray[$setting];
+                }
+                else {
+                    $this->config[$setting] = null;
+                }
             }
         }
     }
@@ -58,5 +63,9 @@ class Config implements ConfigInterface {
 
     public function getProject(): ?string {
         return $this->config['project'];
+    }
+
+    public function setProject(string $project): void {
+        $this->config['project'] = $project;
     }
 }

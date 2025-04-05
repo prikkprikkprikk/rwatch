@@ -87,8 +87,8 @@ dataset('configScenarios', [
         ],
         'expected' => [
             'server' => '123',
-            'username' => 'Array',
-            'project' => 'Array',
+            'username' => null,
+            'project' => null,
         ]
     ]
 ]);
@@ -104,3 +104,24 @@ it('handles configuration scenarios properly', function (
         ->and($config->getProject())->toBe($expected['project']);
 
 })->with('configScenarios');
+
+it('can set the server', function () {
+    $config = new Config([]);
+    $config->setServer('testServer');
+
+    expect($config->getServer())->toBe('testServer');
+});
+
+it('can set the username', function () {
+    $config = new Config([]);
+    $config->setUsername('testUsername');
+
+    expect($config->getUsername())->toBe('testUsername');
+});
+
+it('can set the project', function () {
+    $config = new Config([]);
+    $config->setProject('testProject');
+
+    expect($config->getProject())->toBe('testProject');
+});
