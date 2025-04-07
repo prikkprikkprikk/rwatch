@@ -2,4 +2,6 @@ parameters:
     level: max
     paths:
         - src
+    scanFiles:
+      - tests/Pest.php
     editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'

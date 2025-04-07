@@ -25,9 +25,9 @@
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+// expect()->extend('toBeOne', function () {
+//     return $this->toBe(1);
+// });
 
 /*
 |--------------------------------------------------------------------------
@@ -40,7 +40,11 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function getTestConfig(): RWatch\Config\Config
 {
-    // ..
+    $config = new RWatch\Config\Config();
+    $config->setProject('testProject');
+    $config->setServer('testServer');
+    $config->setUsername('testUsername');
+    return $config;
 }
