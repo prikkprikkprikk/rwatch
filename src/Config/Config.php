@@ -22,18 +22,17 @@ class Config implements ConfigInterface {
     }
 
     /**
-     * @param array<string, ?string> $configArray
-     * @return void
+     * @param array<string, string|integer|null> $configArray
      */
     public function fromArray(array $configArray): void {
         foreach (array_keys($this->config) as $setting) {
-            if (isset($configArray[$setting])) {
-                if (is_string($configArray[$setting]) || is_numeric($configArray[$setting])) {
-                    $this->config[$setting] = (string)$configArray[$setting];
-                }
-                else {
-                    $this->config[$setting] = null;
-                }
+            if (!isset($configArray[$setting])) {
+                continue;
+            }
+            if (is_string($configArray[$setting])) {
+                $this->config[$setting] = $configArray[$setting];
+            } elseif (is_integer($configArray[$setting])) {
+                $this->config[$setting] = (string)$configArray[$setting];
             }
         }
     }
