@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace RWatch\Command;
+namespace RWatch\Command\Contracts;
 
-use RWatch\Config\Config;
 use RWatch\IO\IOInterface;
 
 interface CommandInterface {
