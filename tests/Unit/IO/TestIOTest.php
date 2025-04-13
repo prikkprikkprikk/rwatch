@@ -45,3 +45,15 @@ test('confirm should reply with a canned response', function () {
 
     expect($io->confirm('Confirm action?'))->toBe(true);
 });
+
+it('can display a pause message', function () {
+    $io = new TestIO([]);
+
+    expect($io->pause('Press enter to continue ...'))->toBeNull();
+});
+
+it('can echo a message', function () {
+    $io = new TestIO([]);
+
+    expect($io->echo('Test message'))->toBeNull();
+});

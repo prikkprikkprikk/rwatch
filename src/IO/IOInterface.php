@@ -30,4 +30,20 @@ interface IOInterface {
      * @return boolean
      */
     public function confirm(string $question): bool;
+
+    /**
+     * Pause execution with a message, require ENTER to be pressed to continue.
+     *
+     * @param string $message
+     * @return null
+     */
+    public function pause(string $message): null;
+
+    /**
+     * Simply echo the message without pausing.
+     *
+     * @param string $string
+     * @return null
+     */
+    public function echo(string $string): null;
 }

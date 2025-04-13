@@ -52,4 +52,25 @@ class TestIO implements IOInterface {
         }
         return false;
     }
+
+    /**
+     * Pause the execution with a message. Press ENTER to continue.
+     *
+     * @param string $message
+     * @return null
+     */
+    public function pause(string $message): null {
+        return null;
+    }
+
+    /**
+     * Simply echo the message without pausing.
+     *
+     * @param string $string
+     * @return null
+     */
+    public function echo(string $string):null {
+        // Since this is a test IO, we don't actually echo anything.
+        return null;
+    }
 }
