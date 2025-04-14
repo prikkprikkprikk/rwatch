@@ -15,11 +15,15 @@ interface ConfigInterface {
      */
     public function toArray(): array;
 
+    public function setServer(string $server): void;
+
     public function getServer(): string|null;
+
+    public function setUsername(string $username): void;
 
     public function getUsername(): string|null;
 
-    public function getProject(): string|null;
-
     public function setProject(string $project): void;
+
+    public function getProject(): string|null;
 }
