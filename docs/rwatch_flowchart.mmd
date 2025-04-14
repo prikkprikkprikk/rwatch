@@ -1,0 +1,21 @@
+---
+config:
+---
+flowchart TB
+    Start(("run rwatch")) --> CLAsGiven{{"Command line arguments for **host** given?"}}
+    CLAsGiven -- Yes --> HydrateAppState["Hydrate AppState"]
+    CLAsGiven -- No --> ConfigFileExists{{"Config file exists?"}}
+    ConfigFileExists -- Yes --> ReadConfigFile[/"Read config file"/]
+    ConfigFileExists -- No --> askToCreateConfig{{"Prompt: Create config file?"}}
+    askToCreateConfig -- Yes --> promptForHost["Ask for host name in ssh config"]
+    askToCreateConfig -- No --> Exit((("Exit")))
+    promptForHost --> writeToConfigFile["Write to config file"]
+        promptForHost@{ shape: sl-rect}
+    writeToConfigFile --> HydrateAppState
+        writeToConfigFile@{ shape: lin-cyl}
+    ReadConfigFile --> ValidateConfigFile{{"Config valid?"}}
+    ValidateConfigFile -- Yes --> HydrateAppState
+    ValidateConfigFile -- No --> ConfigFileInvalid[Display &quot;config file invalid&quot; message]
+    HydrateAppState --> SSHintoServer["SSH into server"]
+    SSHintoServer --> Exit
+    ConfigFileInvalid --> Exit
