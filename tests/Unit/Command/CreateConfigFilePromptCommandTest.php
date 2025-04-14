@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
+use RWatch\IO\TestIO;
+
 beforeEach(function () {
-   $this->command = new \RWatch\Command\CreateConfigFilePromptCommand();
+    $this->app = new \RWatch\App\App();
+    $this->command = new \RWatch\Command\CreateConfigFilePromptCommand();
 });
 
 it('exits the program if the answer is negative', function () {
 
-    $io = new \RWatch\IO\TestIO([
+    $io = new TestIO([
         'Create config file? (y/n)' => false
     ]);
 
@@ -17,7 +20,7 @@ it('exits the program if the answer is negative', function () {
 
 it('returns the next command if the answer is positive', function () {
 
-    $io = new \RWatch\IO\TestIO([
+    $io = new TestIO([
         'Create config file? (y/n)' => true
     ]);
 

@@ -40,11 +40,10 @@
 |
 */
 
-function getTestConfig(): RWatch\Config\Config
-{
-    $config = new RWatch\Config\Config();
-    $config->setProject('testProject');
-    $config->setServer('testServer');
-    $config->setUsername('testUsername');
-    return $config;
+function getTestState(): RWatch\App\Contracts\AppStateInterface {
+    $appState = new RWatch\App\AppState();
+    $appState->setProject('testProject');
+    $appState->setServer('testServer');
+    $appState->setUsername('testUsername');
+    return $appState;
 }
