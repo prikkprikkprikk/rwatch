@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace RWatch\Command;
 
-use RWatch\Command\CommandInterface;
+use RWatch\Command\Contracts\CommandInterface;
 use RWatch\Config\ConfigInterface;
-use RWatch\IO\IOInterface;
 
 abstract class ConfigAwareCommand implements CommandInterface {
 
@@ -17,6 +16,5 @@ abstract class ConfigAwareCommand implements CommandInterface {
      * @param ConfigInterface $config The app's configuration object.
      */
     public function __construct(protected ConfigInterface $config) {
-        $this->config = $config;
     }
 }
