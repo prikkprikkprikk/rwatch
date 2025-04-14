@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace RWatch\Command;
 
-use RWatch\App\App;
-use RWatch\Command\ConfigAwareCommand;
+use RWatch\Command\Contracts\CommandInterface;
 use RWatch\Config\ConfigInterface;
 use RWatch\IO\IOInterface;
+use RWatch\Shell\Enum\ExitCodes;
 use RWatch\Shell\ShellExecutorInterface;
 
 class StartNpmRunWatchCommand implements CommandInterface{
@@ -25,7 +25,7 @@ class StartNpmRunWatchCommand implements CommandInterface{
         $project = $this->config->getProject();
 
         if (is_null($project)) {
-            $confirmation = $io->confirm("No project selected. Please select a project first.");
+            $confirmation = $io->confirm("Prosjekt ikke valgt. Vennligst velg et prosjekt først.");
 
             if ($confirmation == false) {
                 return null;
@@ -33,9 +33,6 @@ class StartNpmRunWatchCommand implements CommandInterface{
 
             return new FetchSymlinksFromServerCommand($this->config);
         }
-
-        // Start npm watch on the remote server
-        echo sprintf("Selected project: %s", $project) . PHP_EOL;
 
         // Using SSH with pseudo-terminal allocation (-t) and cd -P to resolve symlinks
         $sshStartCommand = sprintf(
@@ -45,13 +42,17 @@ class StartNpmRunWatchCommand implements CommandInterface{
             $project
         );
 
-        $resultCode = $this->shellExecutor->execute($sshStartCommand);
+        $shellExitCode = $this->shellExecutor->execute($sshStartCommand);
 
-        if ($resultCode != 0) {
-            return null;
+        if ($shellExitCode == ExitCodes::SSH_CONNECTION_CLOSED) {
+            return new FetchSymlinksFromServerCommand($this->config);
         }
 
-        return new FetchSymlinksFromServerCommand($this->config);
+        return new PauseCommand(
+            message: "Kunne ikke kjøre 'npm run watch'. Resultatkode: " . $shellExitCode->value
+                . PHP_EOL . "Vennligst prøv igjen. (Trykk ENTER for å fortsette.)",
+            nextCommand: new FetchSymlinksFromServerCommand($this->config)
+        );
     }
 
     protected function composeCommand(string $command): string {

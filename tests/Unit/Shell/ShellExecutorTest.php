@@ -2,28 +2,38 @@
 
 declare(strict_types=1);
 
+use RWatch\Shell\Enum\ExitCodes;
 use RWatch\Shell\ShellExecutor;
+
+beforeEach(function () {
+    ob_start();
+});
+
+afterEach(function () {
+    ob_end_clean();
+});
 
 it('can successfully execute a shell command and return 0', function () {
     $executor = new ShellExecutor();
     $result = $executor->execute('true');
-    expect($result)->toBe(0);
+    expect($result)->toBe(ExitCodes::SUCCESS);
 });
 
-it('can successfully execute a shell command and return 1', function () {
+it('can successfully execute a failing shell command and return GENERIC_ERROR', function () {
     $executor = new ShellExecutor();
     $result = $executor->execute('false');
-    expect($result)->toBe(1);
+    expect($result)->toBe(ExitCodes::GENERIC_ERROR);
+    expect($result->isFailure())->toBe(true);
 });
 
-it('returns 0 when the command succeeds', function () {
+it('returns SUCCESS when the command succeeds', function () {
     $executor = new ShellExecutor();
     $result = $executor->execute('ls');
-    expect($result)->toBe(0);
+    expect($result)->toBe(ExitCodes::SUCCESS);
 });
 
-it('returns 1 when the command fails', function () {
+it('returns GENERIC_ERROR when trying to execute a non-existent command', function () {
     $executor = new ShellExecutor();
-    $result = $executor->execute('nonexistentcommand');
-    expect($result)->not()->toBe(0);
+    $result = $executor->execute('non-existent-command');
+    expect($result)->toBe(ExitCodes::GENERIC_ERROR);
 });
