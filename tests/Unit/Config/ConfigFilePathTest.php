@@ -2,29 +2,14 @@
 
 use RWatch\Config\ConfigFilePath;
 use RWatch\Config\Exception\WrongFileFormatException;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Path;
 
 beforeEach(function() {
-    $this->filesystem = new Filesystem();
-    // Create temporary test files/directories if needed
-    $this->tempDir = sys_get_temp_dir() . '/configtest';
-    if (!file_exists($this->tempDir)) {
-        $this->filesystem->mkdir($this->tempDir, 0755);
-    }
-    $this->tempDir = realpath($this->tempDir);
-    $this->filesystem->touch($this->tempDir . '/config.json');
-    $this->filesystem->appendToFile($this->tempDir . '/config.json', '{}');
+    $this->tempDir = createTempDir();
+    $this->testFilename = createTestConfigFile();
 });
 
 afterEach(function() {
-    // Cleanup
-    if (file_exists($this->tempDir . '/config.json')) {
-        unlink($this->tempDir . '/config.json');
-    }
-    if (file_exists($this->tempDir)) {
-        rmdir($this->tempDir);
-    }
+    deleteTestConfigFile($this->testFilename);
 });
 
 it('can be constructed with directory and filename', function() {

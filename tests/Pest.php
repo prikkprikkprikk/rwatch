@@ -40,10 +40,44 @@
 |
 */
 
+use Symfony\Component\Filesystem\Filesystem;
+
+/**
+ * Creates an AppState object with test data.
+ *
+ * @return \RWatch\App\Contracts\AppStateInterface
+ */
 function getTestState(): RWatch\App\Contracts\AppStateInterface {
     $appState = new RWatch\App\AppState();
     $appState->setProject('testProject');
     $appState->setServer('testServer');
     $appState->setUsername('testUsername');
     return $appState;
+}
+
+/**
+ * Creates a temporary configuration file in JSON format with an empty object.
+ *
+ * @return string The full path to the created configuration file.
+ */
+function createTestConfigFile(): string {
+    $filesystem = new Filesystem();
+    $tempDir = createTempDir();
+    $tempFilename = $tempDir . '/config.json';
+    $filesystem->touch($tempFilename);
+    $filesystem->appendToFile($tempFilename, '[]');
+    return $tempFilename;
+}
+
+function createTempDir(): string {
+    $tempDir = sys_get_temp_dir() . '/rwatch_configtest';
+    if (!file_exists($tempDir)) {
+        mkdir($tempDir, 0755);
+    }
+    return realpath($tempDir);
+}
+
+function deleteTestConfigFile(string $filename): void {
+    $filesystem = new Filesystem();
+    $filesystem->remove($filename);
 }
