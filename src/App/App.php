@@ -4,6 +4,7 @@ namespace RWatch\App;
 
 use RWatch\App\Contracts\AppStateInterface;
 use RWatch\Command\FetchSymlinksFromServerCommand;
+use RWatch\Command\LoadConfigFileCommand;
 use RWatch\CommandLineOptions\CommandLineOptionsInterface;
 use RWatch\Config\Config;
 use RWatch\Config\ConfigInterface;
@@ -26,20 +27,19 @@ class App {
 
         self::$config = $config ?? new Config();
 
-        self::$config->setUsername('jorn');
-        self::$config->setServer('dev22');
-
-        self::$state = $state ?? new AppState(self::$config);
+        self::$state = $state ?? AppState::getInstance();
+        self::$state->loadConfig(self::$config);
     }
 
     public static function getState(): AppStateInterface {
-        self::$state ??= new AppState(self::$config);
+        self::$state ??= AppState::getInstance();
+        self::$state->loadConfig(self::$config);
         return self::$state;
     }
 
     public function run(): void {
         // $command = new CreateConfigFilePromptCommand();
-        $command = new FetchSymlinksFromServerCommand(self::$state);
+        $command = new LoadConfigFileCommand('/Users/prikkprikkprikk/.config/rwatch/config.json');
 
         do {
             $command = $command->execute(self::$io);
