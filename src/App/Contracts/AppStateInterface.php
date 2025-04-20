@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace RWatch\App\Contracts;
 
+use RWatch\Config\ConfigInterface;
+
 interface AppStateInterface {
+
+    public function loadConfig(ConfigInterface $config): void;
+
     public function setServer(string $server): void;
 
     public function getServer(): ?string;

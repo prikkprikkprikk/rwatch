@@ -4,19 +4,31 @@ declare(strict_types=1);
 
 namespace RWatch\Command;
 
+use RWatch\App\AppState;
 use RWatch\App\Contracts\AppStateInterface;
 use RWatch\Command\Contracts\CommandInterface;
 use RWatch\Config\ConfigInterface;
 use RWatch\IO\IOInterface;
 use RWatch\Shell\Enum\ExitCodes;
+use RWatch\Shell\ShellExecutor;
 use RWatch\Shell\ShellExecutorInterface;
 
 class StartNpmRunWatchCommand implements CommandInterface{
 
+    protected AppStateInterface $appState;
+    protected ShellExecutorInterface $shellExecutor;
+
+    /**
+     * @param AppStateInterface|null $appState
+     * @param ShellExecutorInterface|null $shellExecutor
+     */
     public function __construct(
-        protected AppStateInterface      $appState,
-        protected ShellExecutorInterface $shellExecutor
-    ) { }
+        ?AppStateInterface      $appState = null,
+        ?ShellExecutorInterface $shellExecutor = null
+    ) {
+        $this->appState = $appState ?? AppState::getInstance();
+        $this->shellExecutor = $shellExecutor ?? new ShellExecutor();
+    }
 
     /**
      * @inheritDoc
