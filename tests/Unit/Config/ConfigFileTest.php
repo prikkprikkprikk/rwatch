@@ -6,7 +6,7 @@ use RWatch\Config\ConfigFile;
 use RWatch\Config\ConfigFilePath;
 
 beforeEach(function() {
-    $this->testFilename = createTestConfigFile();
+    $this->testFilename = createEmptyTestConfigFile();
 });
 
 afterEach(function() {

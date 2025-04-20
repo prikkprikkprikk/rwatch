@@ -40,15 +40,17 @@
 |
 */
 
+use RWatch\App\AppState;
+use RWatch\App\Contracts\AppStateInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Creates an AppState object with test data.
  *
- * @return \RWatch\App\Contracts\AppStateInterface
+ * @return AppStateInterface
  */
-function getTestState(): RWatch\App\Contracts\AppStateInterface {
-    $appState = new RWatch\App\AppState();
+function getTestState(): AppStateInterface {
+    $appState = AppState::getInstance();
     $appState->setProject('testProject');
     $appState->setServer('testServer');
     $appState->setUsername('testUsername');
@@ -56,18 +58,35 @@ function getTestState(): RWatch\App\Contracts\AppStateInterface {
 }
 
 /**
- * Creates a temporary configuration file in JSON format with an empty object.
+ * Creates a temporary configuration file in JSON format with an empty array.
  *
  * @return string The full path to the created configuration file.
  */
-function createTestConfigFile(): string {
+function createEmptyTestConfigFile(): string {
+    return createTestConfigFile([]);
+}
+
+/**
+ * Creates a temporary configuration file with the supplied array as its contents.
+ *
+ * @param array<string, string|int> $data Data to be saved to the file.
+ * @return string The full path to the created configuration file.
+ */
+function createTestConfigFile(array $data = []): string {
     $filesystem = new Filesystem();
     $tempDir = createTempDir();
     $tempFilename = $tempDir . '/config.json';
+    if (file_exists($tempFilename)) {
+        unlink($tempFilename);
+    }
     $filesystem->touch($tempFilename);
-    $filesystem->appendToFile($tempFilename, '[]');
+    $dataAsJson = json_encode($data);
+    if ($dataAsJson === false) {
+        throw new \RuntimeException('Could not encode data to JSON');
+    }
+    $filesystem->appendToFile($tempFilename, $dataAsJson);
     return $tempFilename;
-}
+};
 
 function createTempDir(): string {
     $tempDir = sys_get_temp_dir() . '/rwatch_configtest';

@@ -5,7 +5,7 @@ use RWatch\Config\Exception\WrongFileFormatException;
 
 beforeEach(function() {
     $this->tempDir = createTempDir();
-    $this->testFilename = createTestConfigFile();
+    $this->testFilename = createEmptyTestConfigFile();
 });
 
 afterEach(function() {

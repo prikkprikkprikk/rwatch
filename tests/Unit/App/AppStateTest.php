@@ -5,6 +5,10 @@ declare(strict_types=1);
 use RWatch\App\AppState;
 use RWatch\Config\Config;
 
+beforeEach(function () {
+    AppState::destroy();
+});
+
 it('can create an AppState object given a Config object', function () {
     $config = new Config([
         'server' => 'testServer',
@@ -12,7 +16,8 @@ it('can create an AppState object given a Config object', function () {
         'project' => 'testProject',
     ]);
 
-    $appState = new AppState($config);
+    $appState = AppState::getInstance();
+    $appState->loadConfig($config);
     expect($appState->getServer())->toBe('testServer')
         ->and($appState->getUsername())->toBe('testUsername')
         ->and($appState->getProject())->toBe('testProject');
@@ -24,7 +29,7 @@ it('can configure the AppState object by loading a Config object', function () {
         'username' => 'testUsername',
         'project' => 'testProject',
     ]);
-    $appState = new AppState();
+    $appState = AppState::getInstance();
     $appState->loadConfig($config);
     expect($appState->getServer())->toBe('testServer')
         ->and($appState->getUsername())->toBe('testUsername')
@@ -32,14 +37,15 @@ it('can configure the AppState object by loading a Config object', function () {
 });
 
 it('can create an AppAtate object with no given Config object', function () {
-    $appState = new AppState();
+    $appState = AppState::getInstance();
     expect($appState->getServer())->toBeNull()
         ->and($appState->getUsername())->toBeNull()
-        ->and($appState->getProject())->toBeNull();
+        ->and($appState->getProject())->toBeNull()
+    ;
 });
 
 it('can set and get the various properties', function () {
-    $appState = new AppState();
+    $appState = AppState::getInstance();
     $appState->setServer('testServer');
     $appState->setUsername('testUsername');
     $appState->setProject('testProject');
