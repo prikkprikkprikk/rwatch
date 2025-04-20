@@ -8,7 +8,7 @@ interface ConfigInterface {
      * @param array<string, string|null> $configArray
      * @return void
      */
-    public function fromArray(array $configArray): void;
+    public function loadConfigFromArray(array $configArray): void;
 
     /**
      * @return array<string, ?string>

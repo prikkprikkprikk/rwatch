@@ -1,7 +1,7 @@
 <?php
 
 use RWatch\Config\Config;
-use RWatch\Config\Exception\InvalidOptionException;
+use RWatch\Config\ConfigFilePath;
 
 /**
  * This test suite tests the Config class, which is responsible for holding the app's configuration values.
@@ -124,4 +124,33 @@ it('can set the project', function () {
     $config->setProject('testProject');
 
     expect($config->getProject())->toBe('testProject');
+});
+
+it('can load a ConfigFilePath', function () {
+    $testFilename = createEmptyTestConfigFile();
+    $configFilePath = new ConfigFilePath($testFilename);
+    $config = new Config($configFilePath);
+    expect($config->getServer())->toBeNull()
+        ->and($config->getUsername())->toBeNull()
+        ->and($config->getProject())->toBeNull();
+});
+
+it('can load a full file path', function () {
+    $testFilename = createEmptyTestConfigFile();
+    $config = new Config($testFilename);
+    expect($config->getServer())->toBeNull()
+        ->and($config->getUsername())->toBeNull()
+        ->and($config->getProject())->toBeNull();
+});
+
+it('can load a config file with contents', function () {
+    $filename = createTestConfigFile([
+        'server' => 'testServer',
+        'username' => 'testUsername',
+        'project' => 'testProject',
+    ]);
+    $config = new Config($filename);
+    expect($config->getServer())->toBe('testServer')
+        ->and($config->getUsername())->toBe('testUsername')
+        ->and($config->getProject())->toBe('testProject');
 });
