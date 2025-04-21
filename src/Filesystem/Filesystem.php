@@ -10,7 +10,7 @@ use Symfony\Component\Filesystem\Path;
 
 class Filesystem implements FilesystemInterface {
 
-    protected SymfonyFilesystem $filesystem;
+    public SymfonyFilesystem $filesystem;
 
     public function __construct() {
         $this->filesystem = new SymfonyFilesystem();

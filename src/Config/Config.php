@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace RWatch\Config;
 
 use RuntimeException;
-use RWatch\Filesystem\Contracts\FilesystemInterface;
-use RWatch\Filesystem\Filesystem;
 
 class Config implements ConfigInterface {
 
@@ -15,7 +13,6 @@ class Config implements ConfigInterface {
         'username' => null,
         'project' => null,
     ];
-    private FilesystemInterface $filesystem;
     private ConfigFilePath $configFilePath;
     private ConfigFile $configFile;
 
@@ -25,23 +22,21 @@ class Config implements ConfigInterface {
      *
      * @param array<string, ?string>|ConfigFile|ConfigFilePath|string|null $configSource
      */
-    public function __construct(array|ConfigFile|ConfigFilePath|string|null $configSource = null, ?FilesystemInterface $filesystem = null) {
-        $this->filesystem = $filesystem ?? new Filesystem();
-
+    public function __construct(array|ConfigFile|ConfigFilePath|string|null $configSource = null) {
         if (is_array($configSource)) {
             $this->loadConfigFromArray($configSource);
             return;
         }
 
         if ($configSource === null) {
-            $this->configFilePath = ConfigFilePath::getDefaultConfigFilePath($this->filesystem);
-            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath, filesystem: $this->filesystem);
+            $this->configFilePath = ConfigFilePath::getDefaultConfigFilePath();
+            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath);
         } elseif (is_string($configSource)) {
-            $this->configFilePath = new ConfigFilePath(path: $configSource, filesystem: $this->filesystem);
-            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath, filesystem: $this->filesystem);
+            $this->configFilePath = new ConfigFilePath(path: $configSource);
+            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath);
         } elseif (is_a($configSource, ConfigFilePath::class)) {
             $this->configFilePath = $configSource;
-            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath, filesystem: $this->filesystem);
+            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath);
         } elseif ($configSource instanceof ConfigFile) {
             $this->configFile = $configSource;
         }

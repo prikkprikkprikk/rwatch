@@ -34,6 +34,6 @@ it('returns SUCCESS when the command succeeds', function () {
 
 it('returns GENERIC_ERROR when trying to execute a non-existent command', function () {
     $executor = new ShellExecutor();
-    $result = $executor->execute('non-existent-command');
+    $result = $executor->execute('non-existent-command 2>/dev/null');
     expect($result)->toBe(ExitCodes::GENERIC_ERROR);
 });

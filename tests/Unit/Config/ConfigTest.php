@@ -2,6 +2,9 @@
 
 use RWatch\Config\Config;
 use RWatch\Config\ConfigFilePath;
+use RWatch\Container\Container;
+use RWatch\Filesystem\Contracts\FilesystemInterface;
+use RWatch\Filesystem\TestFilesystem;
 
 /**
  * This test suite tests the Config class, which is responsible for holding the app's configuration values.
@@ -93,6 +96,26 @@ dataset('configScenarios', [
     ]
 ]);
 
+
+beforeEach(function() {
+    Container::reset();
+    Container::bind(FilesystemInterface::class, TestFilesystem::class);
+    $this->filesystem = Container::singleton(FilesystemInterface::class);
+    $this->tempDir = createTempDir();
+    $this->testFilename = createEmptyTestConfigFile();
+    $this->filesystem->setFileConfig(
+        $this->testFilename,
+        [
+            'isDirectory' => false,
+            'isFile' => true,
+            'exists' => true,
+            'isReadable' => true,
+            'contents' => '{}',
+        ]
+    );
+});
+
+
 it('handles configuration scenarios properly', function (
     array $config,
     array $expected,
@@ -127,8 +150,7 @@ it('can set the project', function () {
 });
 
 it('can load a ConfigFilePath', function () {
-    $testFilename = createEmptyTestConfigFile();
-    $configFilePath = new ConfigFilePath($testFilename);
+    $configFilePath = new ConfigFilePath($this->testFilename);
     $config = new Config($configFilePath);
     expect($config->getServer())->toBeNull()
         ->and($config->getUsername())->toBeNull()
@@ -149,6 +171,20 @@ it('can load a config file with contents', function () {
         'username' => 'testUsername',
         'project' => 'testProject',
     ]);
+    $this->filesystem->setFileConfig(
+        $this->testFilename,
+        [
+            'isDirectory' => false,
+            'isFile' => true,
+            'exists' => true,
+            'isReadable' => true,
+            'contents' => '{
+                "server": "testServer",
+                "username": "testUsername",
+                "project": "testProject"
+            }',
+        ]
+    );
     $config = new Config($filename);
     expect($config->getServer())->toBe('testServer')
         ->and($config->getUsername())->toBe('testUsername')

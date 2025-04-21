@@ -31,7 +31,7 @@ class App {
 
         self::$filesystem = $filesystem ?? new Filesystem();
 
-        self::$config = $config ?? new Config(filesystem: self::$filesystem);
+        self::$config = $config ?? new Config();
 
         self::$state = $state ?? AppState::getInstance();
         self::$state->loadConfig(self::$config);

@@ -6,8 +6,8 @@ namespace RWatch\Config;
 use RuntimeException;
 use RWatch\Config\Exception\DirectoryNotFoundException;
 use RWatch\Config\Exception\FileNotFoundException;
+use RWatch\Container\Container;
 use RWatch\Filesystem\Contracts\FilesystemInterface;
-use RWatch\Filesystem\Filesystem;
 use RWatch\Config\Exception\WrongFileFormatException;
 
 /**
@@ -38,21 +38,16 @@ class ConfigFilePath
     private(set) string $directory;
     private(set) ?string $filename = null;
 
-    private(set) FilesystemInterface $filesystem;
+    private FilesystemInterface $filesystem;
 
     /**
-     * @param FilesystemInterface|null $filesystem
      * @return self
-     * @throws DirectoryNotFoundException
-     * @throws WrongFileFormatException
      */
-    public static function getDefaultConfigFilePath(?FilesystemInterface $filesystem = null): self
+    public static function getDefaultConfigFilePath(): self
     {
-        $filesystem = $filesystem ?? new Filesystem();
         return new self(
             path: self::DEFAULT_DIRECTORY,
-            filename: self::DEFAULT_FILENAME,
-            filesystem: $filesystem
+            filename: self::DEFAULT_FILENAME
         );
     }
 
@@ -61,13 +56,12 @@ class ConfigFilePath
      *
      * @param string|null $path
      * @param string|null $filename
-     * @param FilesystemInterface|null $filesystem
      * @throws WrongFileFormatException
-     * @throws DirectoryNotFoundException
+     * @throws DirectoryNotFoundException|FileNotFoundException
      */
-    public function __construct( ?string $path = null, ?string $filename = null, ?FilesystemInterface $filesystem = null )
+    public function __construct( ?string $path = null, ?string $filename = null)
     {
-        $this->filesystem = $filesystem ?? new Filesystem();
+        $this->filesystem = Container::singleton(FilesystemInterface::class);
 
         if ($path === null) {
             $this->directory = $this->expandHomeDirectory(self::DEFAULT_DIRECTORY);

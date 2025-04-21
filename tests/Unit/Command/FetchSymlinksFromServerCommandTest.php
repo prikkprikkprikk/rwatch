@@ -9,4 +9,4 @@ it('', function () {
 
     $command = new RWatch\Command\FetchSymlinksFromServerCommand($appState);
 
-});
+})->skip(message: "Not implemented yet");

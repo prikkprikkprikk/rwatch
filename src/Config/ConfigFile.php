@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace RWatch\Config;
 
 use RWatch\Config\Exception\ConfigFileReadException;
+use RWatch\Container\Container;
 use RWatch\Filesystem\Contracts\FilesystemInterface;
-use RWatch\Filesystem\Filesystem;
-use function PHPUnit\Framework\assertNotNull;
 
 class ConfigFile {
 
@@ -17,12 +16,11 @@ class ConfigFile {
 
     /**
      * @param ?ConfigFilePath $configFilePath
-     * @param ?FilesystemInterface $filesystem
      * @throws ConfigFileReadException
      */
-    public function __construct(?ConfigFilePath $configFilePath = null, ?FilesystemInterface $filesystem = null) {
-        $this->filesystem = $filesystem ?? new Filesystem();
-        $this->configFilePath = $configFilePath ?? new ConfigFilePath(filesystem: $this->filesystem);
+    public function __construct(?ConfigFilePath $configFilePath = null) {
+        $this->filesystem = Container::singleton(FilesystemInterface::class);
+        $this->configFilePath = $configFilePath ?? new ConfigFilePath();
         if ($this->filesystem->isReadable($this->configFilePath->fullPath()) === false) {
             throw new ConfigFileReadException(sprintf("Config file '%s' is not readable", $this->configFilePath->fullPath()));
         }
