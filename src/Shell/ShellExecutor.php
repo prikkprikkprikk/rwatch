@@ -22,7 +22,6 @@ final class ShellExecutor implements ShellExecutorInterface {
     public function execute(string $command): ExitCodes {
         $return_var = null;
         passthru($command, $return_var);
-        echo(var_export($return_var, true));
         return ExitCodes::tryFrom((int)$return_var) ?? ExitCodes::GENERIC_ERROR;
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace RWatch\Config;
 
 use RuntimeException;
+use RWatch\Filesystem\Contracts\FilesystemInterface;
+use RWatch\Filesystem\Filesystem;
 
 class Config implements ConfigInterface {
 
@@ -13,33 +15,47 @@ class Config implements ConfigInterface {
         'username' => null,
         'project' => null,
     ];
+    private FilesystemInterface $filesystem;
+    private ConfigFilePath $configFilePath;
     private ConfigFile $configFile;
 
     /**
-     * Create a Config object either from a given array or from a given file path,
-     * which can be supplied either as a ConfigFilePath or as a string.
+     * Create a Config object either from an array, a ConfigFile, a ConfigFilePath or a path as a string.
+     * If no source is given, a default ConfigFile is created.
      *
-     * @param array<string, ?string>|ConfigFilePath|string|null $configSource
+     * @param array<string, ?string>|ConfigFile|ConfigFilePath|string|null $configSource
      */
-    public function __construct(array|ConfigFilePath|string|null $configSource = null) {
-        if ($configSource === null) {
-            return;
-        }
+    public function __construct(array|ConfigFile|ConfigFilePath|string|null $configSource = null, ?FilesystemInterface $filesystem = null) {
+        $this->filesystem = $filesystem ?? new Filesystem();
+
         if (is_array($configSource)) {
             $this->loadConfigFromArray($configSource);
-        } elseif (is_string($configSource) || (get_class($configSource) === ConfigFilePath::class)) {
-            $this->loadConfigFromFile($configSource);
+            return;
         }
+
+        if ($configSource === null) {
+            $this->configFilePath = ConfigFilePath::getDefaultConfigFilePath($this->filesystem);
+            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath, filesystem: $this->filesystem);
+        } elseif (is_string($configSource)) {
+            $this->configFilePath = new ConfigFilePath(path: $configSource, filesystem: $this->filesystem);
+            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath, filesystem: $this->filesystem);
+        } elseif (is_a($configSource, ConfigFilePath::class)) {
+            $this->configFilePath = $configSource;
+            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath, filesystem: $this->filesystem);
+        } elseif ($configSource instanceof ConfigFile) {
+            $this->configFile = $configSource;
+        }
+
+        $this->loadConfigFromFile();
     }
 
     /**
      *
      */
-    public function loadConfigFromFile(ConfigFilePath|string $filePath): void {
-        if (is_string($filePath)) {
-            $filePath = new ConfigFilePath($filePath);
+    public function loadConfigFromFile(): void {
+        if (!isset($this->configFile)) {
+            return;
         }
-        $this->configFile = new ConfigFile($filePath);
         $configArray = json_decode($this->configFile->getContents(), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new RuntimeException("Failed to parse config file: " . json_last_error_msg());

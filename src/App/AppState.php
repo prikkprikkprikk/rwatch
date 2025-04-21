@@ -20,8 +20,6 @@ class AppState implements AppStateInterface {
     ) {
         if ($config !== null) {
             $this->loadConfig($config);
-        } else {
-            $this->config = new Config();
         }
     }
 

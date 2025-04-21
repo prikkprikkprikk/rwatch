@@ -5,40 +5,46 @@ declare(strict_types=1);
 namespace RWatch\Command;
 
 use RWatch\Command\Contracts\CommandInterface;
-use RWatch\Config\Config;
+use RWatch\Config\ConfigFile;
 use RWatch\Config\ConfigFilePath;
+use RWatch\Filesystem\Contracts\FilesystemInterface;
+use RWatch\Filesystem\Filesystem;
 use RWatch\IO\IOInterface;
+use function PHPUnit\Framework\assertInstanceOf;
 
 class LoadConfigFileCommand implements CommandInterface {
 
     protected ?string $configFilePathString = null;
-    protected ?ConfigFilePath $configFilePath = null;
-    protected Config $config;
+    protected ConfigFilePath|string|null $configFilePath = null;
+    protected ConfigFile $configFile;
+    protected FilesystemInterface $filesystem;
 
     /**
      * Creates a LoadConfigFileCommand either from a ConfigFilePath or a file path string.
+     * If no path is given, try to load from default path.
      *
-     * @param ConfigFilePath|string $configFilePath
+     * @param ConfigFilePath|string|null $configFilePath
+     * @param FilesystemInterface|null $filesystem
      */
-    public function __construct(ConfigFilePath|string $configFilePath) {
-        if (is_string($configFilePath)) {
-            $this->configFilePathString = $configFilePath;
-        } else {
-            $this->configFilePath = $configFilePath;
-        }
+    public function __construct(ConfigFilePath|string|null $configFilePath = null, ?FilesystemInterface $filesystem = null) {
+        $this->filesystem = $filesystem ?? new Filesystem();
+        $this->configFilePath = $configFilePath;
     }
     /**
      * @inheritDoc
      */
     public function execute(IOInterface $io): CommandInterface {
         try {
-            if (is_string($this->configFilePathString)) {
-                $this->configFilePath = new ConfigFilePath($this->configFilePathString);
+            if ($this->configFilePath === null) {
+                $this->configFilePath = ConfigFilePath::getDefaultConfigFilePath($this->filesystem);
+            } elseif (is_string($this->configFilePath)) {
+                $this->configFilePathString = $this->configFilePath;
+                $this->configFilePath = new ConfigFilePath(path: $this->configFilePathString, filesystem: $this->filesystem);
             }
-            $this->config = new Config($this->configFilePath);
+            $this->configFile = new ConfigFile(configFilePath: $this->configFilePath, filesystem: $this->filesystem);
         } catch (\Exception $e) {
             return new PauseCommand("Failed to load config file: {$e->getMessage()}", null);
         }
-        return new HydrateAppStateCommand($this->config);
+        return new HydrateAppStateCommand($this->configFile);
     }
 }

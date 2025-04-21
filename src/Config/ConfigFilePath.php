@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace RWatch\Config;
 
-use Symfony\Component\Filesystem\Path;
-use Symfony\Component\Filesystem\Filesystem;
+use RuntimeException;
+use RWatch\Config\Exception\DirectoryNotFoundException;
+use RWatch\Config\Exception\FileNotFoundException;
+use RWatch\Filesystem\Contracts\FilesystemInterface;
+use RWatch\Filesystem\Filesystem;
 use RWatch\Config\Exception\WrongFileFormatException;
 
 /**
@@ -15,17 +18,17 @@ use RWatch\Config\Exception\WrongFileFormatException;
  * both for testing and for supplying the config file path as a command line argument.
  *
  * It should be able to be constructed with a config file path, which can be either an absolute path
- * or a home-relative path, and optionally a filename.
+ * or a home-relative path, and/or optionally a filename.
  *
  * The constructor should take the directory and file name as separate parameters, and construct the full path.
  * Alternatively, it should take the full path as a single parameter and split it into the directory and file name.
  *
  * The class should be able to return:
- * - The full path of the config file
  * - The directory of the config file
  * - The name of the config file
+ * - The full path of the config file
  *
- * It should also validate the config file path, confirming that it exists and is a JSON file.
+ * It should also validate the config file path, confirming that it exists, is readable and is a JSON file.
  */
 class ConfigFilePath
 {
@@ -35,48 +38,84 @@ class ConfigFilePath
     private(set) string $directory;
     private(set) ?string $filename = null;
 
-    private Filesystem $filesystem;
+    private(set) FilesystemInterface $filesystem;
 
-    public static function getDefaultConfigFilePath(): self
+    /**
+     * @param FilesystemInterface|null $filesystem
+     * @return self
+     * @throws DirectoryNotFoundException
+     * @throws WrongFileFormatException
+     */
+    public static function getDefaultConfigFilePath(?FilesystemInterface $filesystem = null): self
     {
-        return new self(self::DEFAULT_DIRECTORY, self::DEFAULT_FILENAME);
+        $filesystem = $filesystem ?? new Filesystem();
+        return new self(
+            path: self::DEFAULT_DIRECTORY,
+            filename: self::DEFAULT_FILENAME,
+            filesystem: $filesystem
+        );
     }
 
-    public function __construct( string $path, ?string $filename = null )
+    /**
+     *
+     *
+     * @param string|null $path
+     * @param string|null $filename
+     * @param FilesystemInterface|null $filesystem
+     * @throws WrongFileFormatException
+     * @throws DirectoryNotFoundException
+     */
+    public function __construct( ?string $path = null, ?string $filename = null, ?FilesystemInterface $filesystem = null )
     {
-        $this->filesystem = new Filesystem();
+        $this->filesystem = $filesystem ?? new Filesystem();
 
-        $path = $this->expandHomeDirectory($path);
+        if ($path === null) {
+            $this->directory = $this->expandHomeDirectory(self::DEFAULT_DIRECTORY);
 
-        if ($filename == null) {
-            $this->directory = Path::getDirectory($path);
-            $this->filename = basename($path);
+            if ($filename === null) {
+                $this->filename = self::DEFAULT_FILENAME;
+            }
         } else {
-            $this->directory = $path;
-            $this->filename = $filename;
+            if ($filename === null) {
+                $path = $this->expandHomeDirectory($path);
+                if ($this->filesystem->isFile($path)) {
+                    $this->directory = $this->filesystem->getDirectory($path);
+                    $this->filename = basename($path);
+                } else {
+                    if ($this->filesystem->isDirectory($path) === false) {
+                        throw new DirectoryNotFoundException("Directory does not exist: $path");
+                    }
+                    $this->directory = $path;
+                    $this->filename = self::DEFAULT_FILENAME;
+                }
+            } else {
+                $this->directory = $this->expandHomeDirectory($path);
+                $this->filename = $filename;
+            }
         }
 
         $this->validatePath();
     }
 
     /**
-     * Validates the path.
+     * Validates the path. Throws a relevant error if any problem is encountered.
      *
      * @return void
      * @throws WrongFileFormatException
+     * @throws RuntimeException
+     * @throws FileNotFoundException
      */
     private function validatePath(): void
     {
-        if (!$this->isJsonFile()) {
+        if ($this->fileExists() === false) {
+            throw new FileNotFoundException(sprintf('Config file "%s" does not exist', $this->fullPath()));
+        }
+        if ($this->isJsonFile() === false) {
             throw new WrongFileFormatException('Config file is not a JSON file');
         }
-        if ($this->fileExists()) {
-            $directory = realpath($this->directory);
-            if ($directory === false) {
-                throw new \RuntimeException('Could not determine real path of directory');
-            }
-            $this->directory = $directory;
-        }
+        $realpath = realpath($this->directory);
+        assert($realpath !== false);
+        $this->directory = $realpath;
     }
 
     /**
@@ -86,7 +125,7 @@ class ConfigFilePath
      */
     private function isJsonFile(): bool
     {
-        return Path::getExtension($this->fullPath()) === 'json';
+        return $this->filesystem->getExtension($this->fullPath()) === 'json';
     }
 
     /**
@@ -96,7 +135,7 @@ class ConfigFilePath
      */
     public function fullPath(): string
     {
-        return Path::normalize($this->directory . '/' . $this->filename);
+        return $this->filesystem->normalize($this->directory . '/' . $this->filename);
     }
 
     /**
@@ -120,46 +159,20 @@ class ConfigFilePath
     }
 
     /**
-     * Expands the home directory in the path, if it exists.
+     * Expands the home directory in the directory, if it exists.
      *
-     * @param string $path
-     * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     private function expandHomeDirectory(string $path): string
     {
-        if (Path::isAbsolute($path)) {
+        if ($this->filesystem->isAbsolute($path)) {
             return $path;
         }
         if (str_starts_with($path, '~/')) {
             $homeDirectory = getenv('HOME');
-            if ($homeDirectory === false) {
-                throw new \RuntimeException('Could not determine home directory');
-            }
-            return Path::join($homeDirectory, substr($path, 2));
+            assert($homeDirectory !== false);
+            return $this->filesystem->join($homeDirectory, substr($path, 2));
         }
         return $path;
-    }
-
-    /**
-     * Whether the config file is readable.
-     *
-     * @return bool
-     */
-    public function fileIsReadable(): bool
-    {
-        return $this->fileExists()
-            && is_readable($this->directory);
-    }
-
-    /**
-     * Whether the directory is writable.
-     *
-     * @return bool
-     */
-    public function directoryIsWritable(): bool
-    {
-        return $this->filesystem->exists($this->directory)
-            && is_writable($this->directory);
     }
 }

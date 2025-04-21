@@ -8,6 +8,8 @@ use RWatch\Command\LoadConfigFileCommand;
 use RWatch\CommandLineOptions\CommandLineOptionsInterface;
 use RWatch\Config\Config;
 use RWatch\Config\ConfigInterface;
+use RWatch\Filesystem\Contracts\FilesystemInterface;
+use RWatch\Filesystem\Filesystem;
 use RWatch\IO\ConsoleIO;
 use RWatch\IO\IOInterface;
 
@@ -17,15 +19,19 @@ class App {
     protected static AppStateInterface $state;
     protected static ConfigInterface $config;
     protected static IOInterface $io;
+    protected static FilesystemInterface $filesystem;
 
     public function __construct(
         ?IOInterface $io = null,
         ?ConfigInterface $config = null,
         ?AppStateInterface $state = null,
+        ?FilesystemInterface $filesystem = null
     ) {
         self::$io = $io ?? new ConsoleIO();
 
-        self::$config = $config ?? new Config();
+        self::$filesystem = $filesystem ?? new Filesystem();
+
+        self::$config = $config ?? new Config(filesystem: self::$filesystem);
 
         self::$state = $state ?? AppState::getInstance();
         self::$state->loadConfig(self::$config);
@@ -39,7 +45,7 @@ class App {
 
     public function run(): void {
         // $command = new CreateConfigFilePromptCommand();
-        $command = new LoadConfigFileCommand('/Users/prikkprikkprikk/.config/rwatch/config.json');
+        $command = new LoadConfigFileCommand();
 
         do {
             $command = $command->execute(self::$io);

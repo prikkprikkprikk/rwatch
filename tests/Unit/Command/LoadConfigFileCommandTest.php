@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use RWatch\Command\Contracts\CommandInterface;
+use RWatch\Command\HydrateAppStateCommand;
 use RWatch\Command\LoadConfigFileCommand;
 use RWatch\Command\PauseCommand;
 use RWatch\Config\ConfigFilePath;
+use RWatch\Filesystem\TestFilesystem;
 use RWatch\IO\TestIO;
 
 it('can load an existing and valid config file', function () {
@@ -27,8 +29,30 @@ it('can load an existing and valid config file', function () {
 
 it('returns a pause command when the config file does not exist', function () {
     $testIo = new TestIO([]);
-    $testConfigFilePath = new ConfigFilePath('non-existant-config.json');
-    $command = new LoadConfigFileCommand($testConfigFilePath);
+    $filesystem = new TestFilesystem();
+    $defaultDirectory = getenv('HOME') . str_replace('~', '', ConfigFilePath::DEFAULT_DIRECTORY);
+    $filesystem->setFileConfig($defaultDirectory . "/non-existant-config.json", [
+        'isDirectory' => false,
+        'isFile' => false,
+        'exists' => false,
+    ]);
+    $command = new LoadConfigFileCommand(configFilePath: '~/non-existant-config.json', filesystem: $filesystem);
     $nextCommand = $command->execute($testIo);
     expect($nextCommand)->toBeInstanceOf(PauseCommand::class);
+});
+
+it('creates a ConfigFilePath with the default config file if none is specified', function () {
+    $testIo = new TestIO([]);
+    $filesystem = new TestFilesystem();
+    $fullDefaultPath = getenv('HOME') . str_replace('~', '', ConfigFilePath::DEFAULT_DIRECTORY) . "/" . ConfigFilePath::DEFAULT_FILENAME;
+    $filesystem->setFileConfig($fullDefaultPath, [
+        'isDirectory' => false,
+        'isFile' => true,
+        'exists' => true,
+        'isReadable' => true,
+        'contents' => '{}',
+    ]);
+    $command = new LoadConfigFileCommand(filesystem: $filesystem);
+    $nextCommand = $command->execute($testIo);
+    expect($nextCommand)->toBeInstanceOf(HydrateAppStateCommand::class);
 });

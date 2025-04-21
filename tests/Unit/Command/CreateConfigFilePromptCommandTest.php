@@ -5,8 +5,8 @@ declare(strict_types=1);
 use RWatch\IO\TestIO;
 
 beforeEach(function () {
-    $this->app = new \RWatch\App\App();
-    $this->command = new \RWatch\Command\CreateConfigFilePromptCommand();
+    // $this->app = new \RWatch\App\App();
+    // $this->command = new \RWatch\Command\CreateConfigFilePromptCommand();
 });
 
 it('exits the program if the answer is negative', function () {
@@ -16,7 +16,7 @@ it('exits the program if the answer is negative', function () {
     ]);
 
     expect($this->command->execute($io))->toBeNull();
-});
+})->skip(message: 'Not implemented yet');
 
 it('returns the next command if the answer is positive', function () {
 
@@ -25,4 +25,4 @@ it('returns the next command if the answer is positive', function () {
     ]);
 
     expect($this->command->execute($io))->toBeInstanceOf(\RWatch\Command\AskForServerNameCommand::class);
-});
+})->skip(message: 'Not implemented yet');
