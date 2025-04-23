@@ -20,14 +20,9 @@ class HydrateAppStateCommand implements CommandInterface {
     }
 
     /**
-     * @param IOInterface $io
      * @return CommandInterface|null
      */
-    public function execute(IOInterface $io): ?CommandInterface {
-        $this->config = new Config($this->configFile);
-        $this->appState = AppState::getInstance();
-        $this->appState->loadConfig($this->config);
-
+    public function execute(): ?CommandInterface {
         return new StartNpmRunWatchCommand();
     }
 }

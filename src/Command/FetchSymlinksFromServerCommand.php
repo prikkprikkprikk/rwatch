@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace RWatch\Command;
 
 use RWatch\App\App;
+use RWatch\App\Contracts\AppStateInterface;
 use RWatch\Command\Contracts\CommandInterface;
+use RWatch\Container\Container;
 use RWatch\IO\IOInterface;
 use RWatch\Shell\ShellExecutor;
 use function Laravel\Prompts\select;
 
-class FetchSymlinksFromServerCommand extends StateAwareCommand {
+class FetchSymlinksFromServerCommand implements CommandInterface {
     /**
      * @inheritDoc
      */
-    public function execute(IOInterface $io): ?CommandInterface {
+    public function execute(): ?CommandInterface {
+
+        $appState = Container::singleton(AppStateInterface::class);
+        $io = Container::singleton(IOInterface::class);
 
         // TODO: Refactor this; it's just copied in from the old App->run() function.
         // Should probably be separated into several commands.
@@ -22,8 +27,8 @@ class FetchSymlinksFromServerCommand extends StateAwareCommand {
         // Get symlinks from remote server
         $command = sprintf(
             'ssh %s@%s "ls -F | grep @ | sed \'s/@//\'"',
-            App::getState()->getUsername(),
-            App::getState()->getServer()
+            $appState->getUsername(),
+            $appState->getServer()
         );
         $output = shell_exec($command);
 
@@ -50,7 +55,7 @@ class FetchSymlinksFromServerCommand extends StateAwareCommand {
 
         // Show interactive selection
         $selectedProject = (string) select(
-            label: "Velg prosjekt for kjøring av 'npm run watch' på ". App::getState()->getServer() .":",
+            label: "Velg prosjekt for kjøring av 'npm run watch' på ". $appState->getServer() .":",
             options: $projects,
             scroll: 10,
         );
@@ -60,11 +65,8 @@ class FetchSymlinksFromServerCommand extends StateAwareCommand {
             return null;
         }
 
-        $this->appState->setProject($selectedProject);
+        $appState->setProject($selectedProject);
 
-        return new StartNpmRunWatchCommand(
-            $this->appState,
-            new ShellExecutor()
-        );
+        return new StartNpmRunWatchCommand();
     }
 }

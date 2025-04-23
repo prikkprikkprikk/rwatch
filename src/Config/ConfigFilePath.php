@@ -32,8 +32,8 @@ use RWatch\Config\Exception\WrongFileFormatException;
  */
 class ConfigFilePath
 {
-    public const string DEFAULT_FILENAME = 'config.json';
     public const string DEFAULT_DIRECTORY = '~/.config/rwatch';
+    public const string DEFAULT_FILENAME = 'config.json';
 
     private(set) string $directory;
     private(set) ?string $filename = null;

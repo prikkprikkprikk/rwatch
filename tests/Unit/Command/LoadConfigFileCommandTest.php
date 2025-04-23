@@ -21,44 +21,10 @@ beforeEach(function () {
 
 
 it('can load an existing and valid config file', function () {
-    $testIo = new TestIO([]);
-
-    $testConfig = [
-        'server' => 'testServer',
-        'project' => 'testProject',
-    ];
-
-    $testConfigFilePath = createTestConfigFile($testConfig);
-
-    $command = new LoadConfigFileCommand($testConfigFilePath);
-
-    $nextCommand = $command->execute($testIo);
-
-    expect($nextCommand)->toBeInstanceOf(CommandInterface::class);
-});
-
-it('returns a pause command when the config file does not exist', function () {
-    $testIo = new TestIO([]);
-
-    $defaultDirectory = getenv('HOME') . str_replace('~', '', ConfigFilePath::DEFAULT_DIRECTORY);
-    $this->filesystem->setFileConfig(
-        $defaultDirectory . "/non-existant-config.json",
-        [
-            'isDirectory' => false,
-            'isFile' => false,
-            'exists' => false,
-        ]
-    );
-    $command = new LoadConfigFileCommand(configFilePath: '~/non-existant-config.json');
-    $nextCommand = $command->execute($testIo);
-    expect($nextCommand)->toBeInstanceOf(PauseCommand::class);
-});
-
-it('creates a ConfigFilePath with the default config file if none is specified', function () {
-    $testIo = new TestIO([]);
-    $fullDefaultPath = getenv('HOME') . str_replace('~', '', ConfigFilePath::DEFAULT_DIRECTORY) . "/" . ConfigFilePath::DEFAULT_FILENAME;
-    $this->filesystem->setFileConfig(
-        $fullDefaultPath,
+    $filesystem = Container::singleton(FilesystemInterface::class);
+    $validFilePath = "~/valid-config.json";
+    $filesystem->setFileConfig(
+        $validFilePath,
         [
             'isDirectory' => false,
             'isFile' => true,
@@ -67,7 +33,30 @@ it('creates a ConfigFilePath with the default config file if none is specified',
             'contents' => '{}',
         ]
     );
+    $command = new LoadConfigFileCommand($validFilePath);
+    $nextCommand = $command->execute();
+    expect($nextCommand)->toBeInstanceOf(CommandInterface::class);
+});
+
+it('returns a pause command when the config file does not exist', function () {
+    $command = new LoadConfigFileCommand(configFilePath: '~/non-existant-config.json');
+    $nextCommand = $command->execute();
+    expect($nextCommand)->toBeInstanceOf(PauseCommand::class);
+});
+
+it('creates a ConfigFilePath with the default config file if none is specified', function () {
     $command = new LoadConfigFileCommand();
-    $nextCommand = $command->execute($testIo);
+    $filesystem = Container::singleton(FilesystemInterface::class);
+    $filesystem->setFileConfig(
+        getDefaultConfigFilePath(),
+        [
+            'isDirectory' => false,
+            'isFile' => true,
+            'exists' => true,
+            'isReadable' => true,
+            'contents' => '{}',
+        ]
+    );
+    $nextCommand = $command->execute();
     expect($nextCommand)->toBeInstanceOf(HydrateAppStateCommand::class);
 });

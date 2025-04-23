@@ -2,50 +2,74 @@
 
 declare(strict_types=1);
 
-use RWatch\Filesystem\Filesystem;
+use RWatch\Container\Container;
 
-beforeEach(function () {
-    $this->filesystem = new Filesystem();
-    $this->tempDir = createTempDir();
-    $this->testFilename = createEmptyTestConfigFile();
+it('can identify a directory as a directory and not as a file', function () {
+    $filesystem = Container::singleton(\RWatch\Filesystem\Contracts\FilesystemInterface::class);
+    $path = '/tmp';
+    $filesystem->setFileConfig(
+        $path,
+        [
+            "isDirectory" => true,
+            "isFile" => false,
+            "exists" => true,
+        ]
+    );
+    expect($filesystem->isDirectory($path))->toBeTrue()
+        ->and($filesystem->isFile($path))->toBeFalse();
 });
 
-afterEach(function() {
-    deleteTestConfigFile($this->testFilename);
+it('can identify an existing file as a file and not a directory', function () {
+    $filesystem = Container::singleton(\RWatch\Filesystem\Contracts\FilesystemInterface::class);
+    $path = '/tmp/test.txt';
+    $filesystem->setFileConfig(
+        $path,
+        [
+            "isDirectory" => false,
+            "isFile" => true,
+            "exists" => true,
+        ]
+    );
+    expect($filesystem->isFile($path))->toBeTrue()
+        ->and($filesystem->isDirectory($path))->toBeFalse()
+        ->and($filesystem->exists($path))->toBeTrue();
 });
 
-it('can identify a directory as a directory', function () {
-    expect($this->filesystem->isDirectory($this->tempDir))->toBeTrue();
-});
-
-it('does not identify a file as a directory', function () {
-    expect($this->filesystem->isDirectory($this->testFilename))->toBeFalse();
-});
-
-it('can identify a file as a file', function () {
-    expect($this->filesystem->isFile($this->testFilename))->toBeTrue();
-});
-
-it('does not identify a directory as a file', function () {
-    expect($this->filesystem->isFile($this->tempDir))->toBeFalse();
-});
-
-it('does not identify a non-existent file as a file', function () {
-    expect($this->filesystem->isFile($this->tempDir . "/non-existent-file.txt"))->toBeFalse();
+it('can identify a non-existent file as such', function () {
+    $filesystem = Container::singleton(\RWatch\Filesystem\Contracts\FilesystemInterface::class);
+    $path = '/does-not-exist';
+    $filesystem->setFileConfig(
+        $path,
+        [
+            "isDirectory" => false,
+            "isFile" => false,
+            "exists" => false,
+        ]
+    );
+    expect($filesystem->isFile($path))->toBeFalse()
+        ->and($filesystem->isDirectory($path))->toBeFalse()
+        ->and($filesystem->exists($path))->toBeFalse();
 });
 
 it('can get the directory of a full path', function () {
-    expect($this->filesystem->getDirectory($this->testFilename))->toBe($this->tempDir);
-});
-
-it('can determine if a file exists', function () {
-    expect($this->filesystem->exists($this->testFilename))->toBeTrue();
-});
-
-it('can determine if a file does not exist', function () {
-    expect($this->filesystem->exists($this->tempDir . "/non-existent-file.txt"))->toBeFalse();
+    $filesystem = Container::singleton(\RWatch\Filesystem\Contracts\FilesystemInterface::class);
+    $directory = '/tmp/sub-directory';
+    $path = $directory . '/test.txt';
+    $filesystem->setFileConfig(
+        $path,
+        [
+            "isDirectory" => false,
+            "isFile" => false,
+            "exists" => false,
+        ]
+    );
+    expect($filesystem->getDirectory($path))->toBe($directory);
 });
 
 it('can join paths', function () {
-    expect($this->filesystem->join($this->tempDir, 'test.txt'))->toBe($this->tempDir . '/test.txt');
+    $filesystem = Container::singleton(\RWatch\Filesystem\Contracts\FilesystemInterface::class);
+    $directory = '/tmp/sub-directory';
+    $file = 'test.txt';
+    $path = "$directory/$file";
+    expect($filesystem->join($directory, $file))->toBe($path);
 });

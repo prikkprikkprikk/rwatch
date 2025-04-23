@@ -8,6 +8,7 @@ use RWatch\App\AppState;
 use RWatch\App\Contracts\AppStateInterface;
 use RWatch\Command\Contracts\CommandInterface;
 use RWatch\Config\ConfigInterface;
+use RWatch\Container\Container;
 use RWatch\IO\IOInterface;
 use RWatch\Shell\Enum\ExitCodes;
 use RWatch\Shell\ShellExecutor;
@@ -15,64 +16,59 @@ use RWatch\Shell\ShellExecutorInterface;
 
 class StartNpmRunWatchCommand implements CommandInterface{
 
-    protected AppStateInterface $appState;
-    protected ShellExecutorInterface $shellExecutor;
-
-    /**
-     * @param AppStateInterface|null $appState
-     * @param ShellExecutorInterface|null $shellExecutor
-     */
-    public function __construct(
-        ?AppStateInterface      $appState = null,
-        ?ShellExecutorInterface $shellExecutor = null
-    ) {
-        $this->appState = $appState ?? AppState::getInstance();
-        $this->shellExecutor = $shellExecutor ?? new ShellExecutor();
-    }
-
     /**
      * @inheritDoc
      */
-    public function execute(IOInterface $io): ?CommandInterface {
+    public function execute(): ?CommandInterface {
 
-        $project = $this->appState->getProject();
+        $appState = Container::singleton(AppStateInterface::class);
+        $project = $appState->getProject();
+
+        $io = Container::singleton(IOInterface::class);
 
         if (is_null($project)) {
             $confirmation = $io->confirm("Prosjekt ikke valgt. Vennligst velg et prosjekt først.");
 
-            if ($confirmation == false) {
+            if ($confirmation === false) {
                 return null;
             }
 
-            return new FetchSymlinksFromServerCommand($this->appState);
+            return new FetchSymlinksFromServerCommand();
         }
 
         // Using SSH with pseudo-terminal allocation (-t) and cd -P to resolve symlinks
         $sshStartCommand = sprintf(
             'ssh -t %s@%s "cd -P ~/%s && pwd && npm run watch"',
-            $this->appState->getUsername(),
-            $this->appState->getServer(),
+            $appState->getUsername(),
+            $appState->getServer(),
             $project
         );
 
-        $shellExitCode = $this->shellExecutor->execute($sshStartCommand);
+        $shellExecutor = Container::singleton(ShellExecutorInterface::class);
+        $shellExitCode = $shellExecutor->execute($sshStartCommand);
 
         if ($shellExitCode == ExitCodes::SSH_CONNECTION_CLOSED) {
-            return new FetchSymlinksFromServerCommand($this->appState);
+            return new FetchSymlinksFromServerCommand();
         }
 
+        $message = "Kunne ikke kjøre 'npm run watch'. Resultatkode: " . $shellExitCode->value
+            . PHP_EOL . "Vennligst prøv igjen. (Trykk ENTER for å fortsette.)";
+
+        echo $message . PHP_EOL;
+
         return new PauseCommand(
-            message: "Kunne ikke kjøre 'npm run watch'. Resultatkode: " . $shellExitCode->value
-                . PHP_EOL . "Vennligst prøv igjen. (Trykk ENTER for å fortsette.)",
-            nextCommand: new FetchSymlinksFromServerCommand($this->appState)
+            message: $message,
+            nextCommand: new FetchSymlinksFromServerCommand()
         );
     }
 
     protected function composeCommand(string $command): string {
+        $appState = Container::singleton(AppStateInterface::class);
+
         return sprintf(
             'ssh -t %s@%s "cd -P ~/%s && pwd && npm run watch"',
-            $this->appState->getUsername(),
-            $this->appState->getServer(),
+            $appState->getUsername(),
+            $appState->getServer(),
             $command
         );
     }

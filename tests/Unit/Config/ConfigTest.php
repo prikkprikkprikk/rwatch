@@ -97,25 +97,6 @@ dataset('configScenarios', [
 ]);
 
 
-beforeEach(function() {
-    Container::reset();
-    Container::bind(FilesystemInterface::class, TestFilesystem::class);
-    $this->filesystem = Container::singleton(FilesystemInterface::class);
-    $this->tempDir = createTempDir();
-    $this->testFilename = createEmptyTestConfigFile();
-    $this->filesystem->setFileConfig(
-        $this->testFilename,
-        [
-            'isDirectory' => false,
-            'isFile' => true,
-            'exists' => true,
-            'isReadable' => true,
-            'contents' => '{}',
-        ]
-    );
-});
-
-
 it('handles configuration scenarios properly', function (
     array $config,
     array $expected,
@@ -150,42 +131,22 @@ it('can set the project', function () {
 });
 
 it('can load a ConfigFilePath', function () {
-    $configFilePath = new ConfigFilePath($this->testFilename);
+    $configFilePath = new ConfigFilePath();
     $config = new Config($configFilePath);
-    expect($config->getServer())->toBeNull()
-        ->and($config->getUsername())->toBeNull()
-        ->and($config->getProject())->toBeNull();
+    expect($config->getServer())->toBe('testServer')
+        ->and($config->getUsername())->toBe('testUsername')
+        ->and($config->getProject())->toBe('testProject');
 });
 
 it('can load a full file path', function () {
-    $testFilename = createEmptyTestConfigFile();
-    $config = new Config($testFilename);
-    expect($config->getServer())->toBeNull()
-        ->and($config->getUsername())->toBeNull()
-        ->and($config->getProject())->toBeNull();
+    $config = new Config(getDefaultConfigFilePath());
+    expect($config->getServer())->toBe('testServer')
+        ->and($config->getUsername())->toBe('testUsername')
+        ->and($config->getProject())->toBe('testProject');
 });
 
 it('can load a config file with contents', function () {
-    $filename = createTestConfigFile([
-        'server' => 'testServer',
-        'username' => 'testUsername',
-        'project' => 'testProject',
-    ]);
-    $this->filesystem->setFileConfig(
-        $this->testFilename,
-        [
-            'isDirectory' => false,
-            'isFile' => true,
-            'exists' => true,
-            'isReadable' => true,
-            'contents' => '{
-                "server": "testServer",
-                "username": "testUsername",
-                "project": "testProject"
-            }',
-        ]
-    );
-    $config = new Config($filename);
+    $config = new Config();
     expect($config->getServer())->toBe('testServer')
         ->and($config->getUsername())->toBe('testUsername')
         ->and($config->getProject())->toBe('testProject');

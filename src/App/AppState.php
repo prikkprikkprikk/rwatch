@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace RWatch\App;
 
 use RWatch\App\Contracts\AppStateInterface;
-use RWatch\Config\Config;
 use RWatch\Config\ConfigInterface;
+use RWatch\Container\Container;
 
 class AppState implements AppStateInterface {
 
@@ -15,28 +15,12 @@ class AppState implements AppStateInterface {
     protected ?string $username = null;
     protected ?string $project = null;
 
-    protected function __construct(
-        protected ?ConfigInterface $config = null
-    ) {
-        if ($config !== null) {
-            $this->loadConfig($config);
-        }
+    public function __construct() {
+        $this->loadConfig();
     }
 
-    /**
-     * Return singleton instance.
-     *
-     * @return AppStateInterface
-     */
-    public static function getInstance(): AppStateInterface {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    public function loadConfig(ConfigInterface $config): void {
-        $this->config = $config;
+    public function loadConfig(): void {
+        $config = Container::singleton(ConfigInterface::class);
         $this->setServer($config->getServer());
         $this->setUsername($config->getUsername());
         $this->setProject($config->getProject());

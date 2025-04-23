@@ -2,54 +2,38 @@
 
 declare(strict_types=1);
 
-use RWatch\App\AppState;
-use RWatch\Config\Config;
+use RWatch\App\Contracts\AppStateInterface;
+use RWatch\Config\ConfigInterface;
+use RWatch\Container\Container;
 
-beforeEach(function () {
-    AppState::destroy();
+it('can create an AppState object', function () {
+    $appState = Container::singleton(AppStateInterface::class);
+    expect($appState)->toBeInstanceOf(AppStateInterface::class)
+        ->and($appState->getServer())->toBe('testServer')
+        ->and($appState->getUsername())->toBe('testUsername')
+        ->and($appState->getProject())->toBe('testProject');
 });
 
 it('can create an AppState object given a Config object', function () {
-    $config = new Config([
-        'server' => 'testServer',
-        'username' => 'testUsername',
-        'project' => 'testProject',
+    $config = Container::singleton(ConfigInterface::class);
+    $config->loadConfigFromArray([
+        'server' => 'customTestServer',
+        'username' => 'customTestUsername',
+        'project' => 'customTestProject',
     ]);
-
-    $appState = AppState::getInstance();
-    $appState->loadConfig($config);
-    expect($appState->getServer())->toBe('testServer')
-        ->and($appState->getUsername())->toBe('testUsername')
-        ->and($appState->getProject())->toBe('testProject');
+    $appState = Container::singleton(AppStateInterface::class);
+    $appState->loadConfig();
+    expect($appState->getServer())->toBe('customTestServer')
+        ->and($appState->getUsername())->toBe('customTestUsername')
+        ->and($appState->getProject())->toBe('customTestProject');
 });
 
-it('can configure the AppState object by loading a Config object', function () {
-    $config = new Config([
-        'server' => 'testServer',
-        'username' => 'testUsername',
-        'project' => 'testProject',
-    ]);
-    $appState = AppState::getInstance();
-    $appState->loadConfig($config);
-    expect($appState->getServer())->toBe('testServer')
-        ->and($appState->getUsername())->toBe('testUsername')
-        ->and($appState->getProject())->toBe('testProject');
-});
-
-it('can create an AppAtate object with no given Config object', function () {
-    $appState = AppState::getInstance();
-    expect($appState->getServer())->toBeNull()
-        ->and($appState->getUsername())->toBeNull()
-        ->and($appState->getProject())->toBeNull()
-    ;
-});
-
-it('can set and get the various properties', function () {
-    $appState = AppState::getInstance();
-    $appState->setServer('testServer');
-    $appState->setUsername('testUsername');
-    $appState->setProject('testProject');
-    expect($appState->getServer())->toBe('testServer')
-        ->and($appState->getUsername())->toBe('testUsername')
-        ->and($appState->getProject())->toBe('testProject');
+it('can set the various properties to new values', function () {
+    $appState = Container::singleton(AppStateInterface::class);
+    $appState->setServer('anotherTestServer');
+    $appState->setUsername('anotherTestUsername');
+    $appState->setProject('anotherTestProject');
+    expect($appState->getServer())->toBe('anotherTestServer')
+        ->and($appState->getUsername())->toBe('anotherTestUsername')
+        ->and($appState->getProject())->toBe('anotherTestProject');
 });

@@ -8,7 +8,7 @@ use RWatch\IO\IOInterface;
 
 class CheckCommandLineArgumentsCommand implements CommandInterface {
 
-    public function execute(IOInterface $io): ?CommandInterface {
+    public function execute(): ?CommandInterface {
         return null;
     }
 }

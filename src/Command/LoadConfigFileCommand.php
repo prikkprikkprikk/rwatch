@@ -7,14 +7,13 @@ namespace RWatch\Command;
 use RWatch\Command\Contracts\CommandInterface;
 use RWatch\Config\ConfigFile;
 use RWatch\Config\ConfigFilePath;
-use RWatch\Container\Container;
 use RWatch\Filesystem\Contracts\FilesystemInterface;
-use RWatch\IO\IOInterface;
+use function Symfony\Component\String\s;
 
 class LoadConfigFileCommand implements CommandInterface {
 
     protected ?string $configFilePathString = null;
-    protected ConfigFilePath|string|null $configFilePath = null;
+    protected ConfigFilePath|string|null $configFilePath;
     protected ConfigFile $configFile;
     private(set) FilesystemInterface $filesystem;
 
@@ -25,13 +24,12 @@ class LoadConfigFileCommand implements CommandInterface {
      * @param ConfigFilePath|string|null $configFilePath
      */
     public function __construct(ConfigFilePath|string|null $configFilePath = null) {
-        $this->filesystem = Container::singleton(FilesystemInterface::class);
         $this->configFilePath = $configFilePath;
     }
     /**
      * @inheritDoc
      */
-    public function execute(IOInterface $io): CommandInterface {
+    public function execute(): CommandInterface {
         try {
             if ($this->configFilePath === null) {
                 $this->configFilePath = ConfigFilePath::getDefaultConfigFilePath();

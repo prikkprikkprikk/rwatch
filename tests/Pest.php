@@ -14,6 +14,11 @@
 // pest()->extend(Tests\TestCase::class)
 //     ->in('Unit', 'Feature');
 
+pest()->beforeEach(function () {
+    bootstrapTestEnvironment();
+})->in('Unit', 'Feature');
+
+
 /*
 |--------------------------------------------------------------------------
 | Expectations
@@ -42,61 +47,83 @@
 
 use RWatch\App\AppState;
 use RWatch\App\Contracts\AppStateInterface;
-use Symfony\Component\Filesystem\Filesystem;
+use RWatch\CommandLineOptions\CommandLineOptions;
+use RWatch\CommandLineOptions\CommandLineOptionsInterface;
+use RWatch\Config\Config;
+use RWatch\Config\ConfigInterface;
+use RWatch\Container\Container;
+use RWatch\Filesystem\Contracts\FilesystemInterface;
+use RWatch\Filesystem\TestFilesystem;
+use RWatch\IO\IOInterface;
+use RWatch\IO\TestIO;
+use RWatch\Shell\ShellExecutor;
+use RWatch\Shell\ShellExecutorInterface;
 
-/**
- * Creates an AppState object with test data.
- *
- * @return AppStateInterface
- */
-function getTestState(): AppStateInterface {
-    $appState = AppState::getInstance();
-    $appState->setProject('testProject');
-    $appState->setServer('testServer');
-    $appState->setUsername('testUsername');
-    return $appState;
+function bootstrapTestEnvironment(): void {
+    Container::reset();
+
+    // Bind interfaces to implementations
+    Container::bind(
+        CommandLineOptionsInterface::class,
+        CommandLineOptions::class,
+    );
+    Container::bind(
+        ConfigInterface::class,
+        Config::class,
+    );
+    Container::bind(
+        AppStateInterface::class,
+        AppState::class,
+    );
+    Container::bind(
+        ShellExecutorInterface::class,
+        ShellExecutor::class,
+    );
+    Container::bind(
+        FilesystemInterface::class,
+        TestFilesystem::class)
+    ;
+    Container::bind(
+        IOInterface::class,
+        TestIO::class
+    );
+
+    $filesystem = Container::singleton(FilesystemInterface::class);
+
+    // Set up default config file response
+    $filesystem->setFileConfig(
+        getDefaultConfigFilePath(),
+        [
+            'isDirectory' => false,
+            'isFile' => true,
+            'exists' => true,
+            'isReadable' => true,
+            'contents' => '{
+                "server": "testServer",
+                "username": "testUsername",
+                "project": "testProject"
+            }'
+        ]
+    );
+
+    $appState = Container::singleton(AppStateInterface::class);
+    $appState->loadConfig();
 }
 
 /**
- * Creates a temporary configuration file in JSON format with an empty array.
+ * Get the default config file path.
  *
- * @return string The full path to the created configuration file.
+ * @return string
  */
-function createEmptyTestConfigFile(): string {
-    return createTestConfigFile([]);
+function getDefaultConfigFilePath(): string {
+    return getDefaultConfigDirectory() . '/config.json';
 }
 
 /**
- * Creates a temporary configuration file with the supplied array as its contents.
+ * Get the default config directory.
  *
- * @param array<string, string|int> $data Data to be saved to the file.
- * @return string The full path to the created configuration file.
+ * @return string
  */
-function createTestConfigFile(array $data = []): string {
-    $filesystem = new Filesystem();
-    $tempDir = createTempDir();
-    $tempFilename = $tempDir . '/config.json';
-    if (file_exists($tempFilename)) {
-        unlink($tempFilename);
-    }
-    $filesystem->touch($tempFilename);
-    $dataAsJson = json_encode($data);
-    if ($dataAsJson === false) {
-        throw new \RuntimeException('Could not encode data to JSON');
-    }
-    $filesystem->appendToFile($tempFilename, $dataAsJson);
-    return $tempFilename;
-};
-
-function createTempDir(): string {
-    $tempDir = sys_get_temp_dir() . '/rwatch_configtest';
-    if (!file_exists($tempDir)) {
-        mkdir($tempDir, 0755);
-    }
-    return realpath($tempDir);
-}
-
-function deleteTestConfigFile(string $filename): void {
-    $filesystem = new Filesystem();
-    $filesystem->remove($filename);
+function getDefaultConfigDirectory(): string {
+    return getenv('HOME') . '/.config/rwatch';
 }

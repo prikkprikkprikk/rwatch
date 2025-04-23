@@ -13,5 +13,5 @@ interface CommandInterface {
      *
      * @return CommandInterface|null
      */
-    public function execute(IOInterface $io): ?CommandInterface;
+    public function execute(): ?CommandInterface;
 }

@@ -8,7 +8,7 @@ use RWatch\Config\ConfigInterface;
 
 interface AppStateInterface {
 
-    public function loadConfig(ConfigInterface $config): void;
+    public function loadConfig(): void;
 
     public function setServer(string $server): void;
 
