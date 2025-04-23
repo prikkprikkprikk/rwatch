@@ -1,16 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RWatch\App;
 
-use RWatch\Command\LoadConfigFileCommand;
+use RWatch\Command\LaunchAppCommand;
 
 class App {
-
-    public function __construct() {}
-
     public function run(): void {
-        // $command = new CreateConfigFilePromptCommand();
-        $command = new LoadConfigFileCommand();
+        $command = new LaunchAppCommand();
 
         do {
             $command = $command->execute();
