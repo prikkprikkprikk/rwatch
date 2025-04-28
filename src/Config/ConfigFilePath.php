@@ -38,7 +38,7 @@ class ConfigFilePath
     private(set) string $directory;
     private(set) ?string $filename = null;
 
-    private FilesystemInterface $filesystem;
+    private readonly FilesystemInterface $filesystem;
 
     /**
      * @return self

@@ -11,16 +11,14 @@ use RWatch\Filesystem\Contracts\FilesystemInterface;
 class ConfigFile {
 
     protected string $fileContents = '';
-    protected ConfigFilePath $configFilePath;
     protected FilesystemInterface $filesystem;
 
     /**
-     * @param ?ConfigFilePath $configFilePath
+     * @param ConfigFilePath $configFilePath
      * @throws ConfigFileReadException
      */
-    public function __construct(?ConfigFilePath $configFilePath = null) {
+    public function __construct(protected ConfigFilePath $configFilePath = new ConfigFilePath()) {
         $this->filesystem = Container::singleton(FilesystemInterface::class);
-        $this->configFilePath = $configFilePath ?? new ConfigFilePath();
         if ($this->filesystem->isReadable($this->configFilePath->fullPath()) === false) {
             throw new ConfigFileReadException(sprintf("Config file '%s' is not readable", $this->configFilePath->fullPath()));
         }

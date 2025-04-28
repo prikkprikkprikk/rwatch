@@ -16,9 +16,7 @@ class CommandLineOptions implements CommandLineOptionsInterface {
     public function __construct(
         private readonly array $optionsWithPatterns = []
     ) {
-        $options = array_map(callback: function ($option) {
-            return "$option:";
-        }, array: array_keys($this->optionsWithPatterns));
+        $options = array_map(callback: fn($option) => "$option:", array: array_keys($this->optionsWithPatterns));
         $this->validateOptions();
         $this->options = getopt(short_options: '', long_options: $options);
     }

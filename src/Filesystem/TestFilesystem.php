@@ -45,22 +45,27 @@ class TestFilesystem extends Filesystem implements FilesystemInterface {
         $this->fileConfig[$fullFilePath] = $cannedReturnValues;
     }
 
+    #[\Override]
     public function isDirectory(string $path): bool {
         return $this->fileConfig[$path]['isDirectory'] ?? false;
     }
 
+    #[\Override]
     public function isFile(string $path): bool {
         return $this->fileConfig[$path]['isFile'] ?? false;
     }
 
+    #[\Override]
     public function exists(string $path): bool {
         return $this->fileConfig[$path]['exists'] ?? false;
     }
 
+    #[\Override]
     public function fileGetContents(string $path): string|false {
         return $this->fileConfig[$path]['contents'] ?? false;
     }
 
+    #[\Override]
     public function isReadable(string $path): bool {
         return $this->fileConfig[$path]['isReadable'] ?? false;
     }

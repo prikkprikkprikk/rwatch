@@ -39,10 +39,9 @@ class FetchSymlinksFromServerCommand implements CommandInterface {
 
         // Parse the output into array and clean up paths
         $projects = array_filter(explode("\n", trim($output)));
-        $projects = array_map(function($path): string {
+        $projects = array_map(fn($path): string =>
             // Remove './' from the beginning of the path
-            return preg_replace('/^\.\//', '', $path) ?? '';
-        }, $projects);
+            preg_replace('/^\.\//', '', (string) $path) ?? '', $projects);
 
         if (empty($projects)) {
             $io->echo("Fant ingen symlinker på serveren" . PHP_EOL);

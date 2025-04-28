@@ -13,7 +13,6 @@ use function Symfony\Component\String\s;
 class LoadConfigFileCommand implements CommandInterface {
 
     protected ?string $configFilePathString = null;
-    protected ConfigFilePath|string|null $configFilePath;
     protected ConfigFile $configFile;
     private(set) FilesystemInterface $filesystem;
 
@@ -23,8 +22,8 @@ class LoadConfigFileCommand implements CommandInterface {
      *
      * @param ConfigFilePath|string|null $configFilePath
      */
-    public function __construct(ConfigFilePath|string|null $configFilePath = null) {
-        $this->configFilePath = $configFilePath;
+    public function __construct(protected ConfigFilePath|string|null $configFilePath = null)
+    {
     }
     /**
      * @inheritDoc

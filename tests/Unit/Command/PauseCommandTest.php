@@ -14,7 +14,7 @@ it('displays a message and returns the next command', function (): void {
         Mockery::mock(CommandInterface::class)
     );
 
-    expect($command->execute($io))
+    expect($command->execute())
         ->toBeInstanceOf(CommandInterface::class);
 });
 
@@ -26,6 +26,6 @@ it('can return null to exit the program', function (): void {
         null
     );
 
-    expect($command->execute($io))
+    expect($command->execute())
         ->toBeNull();
 });

@@ -17,7 +17,7 @@ namespace RWatch\Project;
 class Project
 {
     public function __construct(
-        private string  $path,
+        private readonly string  $path,
         private ?string $name = null,
     ) {
         $this->validatePath($path);
