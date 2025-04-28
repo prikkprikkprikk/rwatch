@@ -41,6 +41,6 @@ class LoadConfigFileCommand implements CommandInterface {
         } catch (\Exception $e) {
             return new PauseCommand("Failed to load config file: {$e->getMessage()}", null);
         }
-        return new HydrateAppStateCommand($this->configFile);
+        return new HydrateAppStateCommand();
     }
 }
