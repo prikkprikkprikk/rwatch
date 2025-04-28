@@ -3,7 +3,7 @@
 use RWatch\Project\ProjectsProviderInterface;
 use RWatch\Project\Project;
 
-test('ProjectsProvider returns array of Project objects', function () {
+test('ProjectsProvider returns array of Project objects', function (): void {
     $provider = new class implements ProjectsProviderInterface {
         public function getProjects(): array {
             return [

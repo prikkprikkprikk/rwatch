@@ -13,14 +13,14 @@ use RWatch\Filesystem\TestFilesystem;
 use RWatch\IO\TestIO;
 
 
-beforeEach(function () {
+beforeEach(function (): void {
     Container::reset();
     Container::bind(FilesystemInterface::class, TestFilesystem::class);
     $this->filesystem = Container::singleton(FilesystemInterface::class);
 });
 
 
-it('can load an existing and valid config file', function () {
+it('can load an existing and valid config file', function (): void {
     $filesystem = Container::singleton(FilesystemInterface::class);
     $validFilePath = "~/valid-config.json";
     $filesystem->setFileConfig(
@@ -38,13 +38,13 @@ it('can load an existing and valid config file', function () {
     expect($nextCommand)->toBeInstanceOf(CommandInterface::class);
 });
 
-it('returns a pause command when the config file does not exist', function () {
+it('returns a pause command when the config file does not exist', function (): void {
     $command = new LoadConfigFileCommand(configFilePath: '~/non-existant-config.json');
     $nextCommand = $command->execute();
     expect($nextCommand)->toBeInstanceOf(PauseCommand::class);
 });
 
-it('creates a ConfigFilePath with the default config file if none is specified', function () {
+it('creates a ConfigFilePath with the default config file if none is specified', function (): void {
     $command = new LoadConfigFileCommand();
     $filesystem = Container::singleton(FilesystemInterface::class);
     $filesystem->setFileConfig(

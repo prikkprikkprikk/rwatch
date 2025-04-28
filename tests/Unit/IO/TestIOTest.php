@@ -6,7 +6,7 @@ namespace RWatch\Tests\Unit\IO;
 
 use RWatch\IO\TestIO;
 
-test('ask should answer a canned response', function () {
+test('ask should answer a canned response', function (): void {
 
     $cannedResponses = [
         'Server name:' => 'd22',
@@ -18,12 +18,12 @@ test('ask should answer a canned response', function () {
     expect($io->ask('Server name:'))->toBe('d22');
 });
 
-test('ask should respond with an empty string if no canned response is found', function () {
+test('ask should respond with an empty string if no canned response is found', function (): void {
     $io = new TestIO();
     expect($io->ask('Server name:'))->toBe('');
 });
 
-test('select should reply with a canned response', function () {
+test('select should reply with a canned response', function (): void {
     $cannedResponses = [
         'Select project:' => '1',
     ];
@@ -31,12 +31,12 @@ test('select should reply with a canned response', function () {
     expect($io->select('Select project:', []))->toBe('1');
 });
 
-test('select should reply with an empty string if no canned response is found', function () {
+test('select should reply with an empty string if no canned response is found', function (): void {
     $io = new TestIO();
     expect($io->select('Select project:', []))->toBe('');
 });
 
-test('confirm should reply with a canned response', function () {
+test('confirm should reply with a canned response', function (): void {
     $cannedResponses = [
         'Confirm action?' => true,
     ];
@@ -46,13 +46,13 @@ test('confirm should reply with a canned response', function () {
     expect($io->confirm('Confirm action?'))->toBe(true);
 });
 
-it('can display a pause message', function () {
+it('can display a pause message', function (): void {
     $io = new TestIO([]);
 
     expect($io->pause('Press enter to continue ...'))->toBeNull();
 });
 
-it('can echo a message', function () {
+it('can echo a message', function (): void {
     $io = new TestIO([]);
 
     expect($io->echo('Test message'))->toBeNull();

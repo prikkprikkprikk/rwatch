@@ -6,7 +6,7 @@ use RWatch\Command\Contracts\CommandInterface;
 use RWatch\Command\PauseCommand;
 use RWatch\IO\TestIO;
 
-it('displays a message and returns the next command', function () {
+it('displays a message and returns the next command', function (): void {
 
     $io = new TestIO([]);
     $command = new PauseCommand(
@@ -18,7 +18,7 @@ it('displays a message and returns the next command', function () {
         ->toBeInstanceOf(CommandInterface::class);
 });
 
-it('can return null to exit the program', function () {
+it('can return null to exit the program', function (): void {
 
     $io = new TestIO([]);
     $command = new PauseCommand(

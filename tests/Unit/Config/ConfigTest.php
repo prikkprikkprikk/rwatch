@@ -100,7 +100,7 @@ dataset('configScenarios', [
 it('handles configuration scenarios properly', function (
     array $config,
     array $expected,
-) {
+): void {
     $config = new Config($config);
 
     expect($config->getServer())->toBe($expected['server'])
@@ -109,28 +109,28 @@ it('handles configuration scenarios properly', function (
 
 })->with('configScenarios');
 
-it('can set the server', function () {
+it('can set the server', function (): void {
     $config = new Config([]);
     $config->setServer('testServer');
 
     expect($config->getServer())->toBe('testServer');
 });
 
-it('can set the username', function () {
+it('can set the username', function (): void {
     $config = new Config([]);
     $config->setUsername('testUsername');
 
     expect($config->getUsername())->toBe('testUsername');
 });
 
-it('can set the project', function () {
+it('can set the project', function (): void {
     $config = new Config([]);
     $config->setProject('testProject');
 
     expect($config->getProject())->toBe('testProject');
 });
 
-it('can load a ConfigFilePath', function () {
+it('can load a ConfigFilePath', function (): void {
     $configFilePath = new ConfigFilePath();
     $config = new Config($configFilePath);
     expect($config->getServer())->toBe('testServer')
@@ -138,14 +138,14 @@ it('can load a ConfigFilePath', function () {
         ->and($config->getProject())->toBe('testProject');
 });
 
-it('can load a full file path', function () {
+it('can load a full file path', function (): void {
     $config = new Config(getDefaultConfigFilePath());
     expect($config->getServer())->toBe('testServer')
         ->and($config->getUsername())->toBe('testUsername')
         ->and($config->getProject())->toBe('testProject');
 });
 
-it('can load a config file with contents', function () {
+it('can load a config file with contents', function (): void {
     $config = new Config();
     expect($config->getServer())->toBe('testServer')
         ->and($config->getUsername())->toBe('testUsername')

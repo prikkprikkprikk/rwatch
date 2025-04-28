@@ -24,7 +24,7 @@ namespace Tests\Unit\CommandLineOptions {
     use RWatch\CommandLineOptions\CommandLineOptionsInterface;
     use RWatch\CommandLineOptions\CommandLineOptions;
 
-    it('can get options from command line', function ()
+    it('can get options from command line', function (): void
     {
         $options = new CommandLineOptions([
             'server' => '/^[\w.-]+$/', // Allows letters, numbers, dots, and hyphens
@@ -39,7 +39,7 @@ namespace Tests\Unit\CommandLineOptions {
     });
 
 
-    it('returns null if option is not set', function ()
+    it('returns null if option is not set', function (): void
     {
         $options = new CommandLineOptions([]);
 

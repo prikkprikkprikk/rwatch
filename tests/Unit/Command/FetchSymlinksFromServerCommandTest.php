@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use RWatch\App\AppState;
 
-it('', function () {
+it('', function (): void {
 
     $command = new RWatch\Command\FetchSymlinksFromServerCommand();
 

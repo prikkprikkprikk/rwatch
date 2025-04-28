@@ -71,7 +71,7 @@ class Config implements ConfigInterface {
             }
             if (is_string($configArray[$setting])) {
                 $this->config[$setting] = $configArray[$setting];
-            } elseif (is_integer($configArray[$setting])) {
+            } elseif (is_int($configArray[$setting])) {
                 $this->config[$setting] = (string)$configArray[$setting];
             }
         }

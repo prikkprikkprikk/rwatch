@@ -14,7 +14,7 @@
 // pest()->extend(Tests\TestCase::class)
 //     ->in('Unit', 'Feature');
 
-pest()->beforeEach(function () {
+pest()->beforeEach(function (): void {
     bootstrapTestEnvironment();
 })->in('Unit', 'Feature');
 

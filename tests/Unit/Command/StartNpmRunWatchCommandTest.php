@@ -10,15 +10,15 @@ use RWatch\IO\TestIO;
 use RWatch\Shell\Enum\ExitCodes;
 use RWatch\Shell\ShellExecutorInterface;
 
-beforeEach(function () {
+beforeEach(function (): void {
     ob_start();
 });
 
-afterEach(function () {
+afterEach(function (): void {
     ob_end_clean();
 });
 
-it('runs `npm run watch`', function () {
+it('runs `npm run watch`', function (): void {
     $executor = Mockery::mock(\RWatch\Shell\ShellExecutorInterface::class);
     /** @var ShellExecutorInterface|MockInterface $executor */
     $executor->shouldReceive('execute')
@@ -31,7 +31,7 @@ it('runs `npm run watch`', function () {
     expect($nextCommand)->toBeInstanceOf(FetchSymlinksFromServerCommand::class);
 });
 
-it('pauses with a message when command fails', function () {
+it('pauses with a message when command fails', function (): void {
     $executor = Mockery::mock(\RWatch\Shell\ShellExecutorInterface::class);
     \RWatch\Container\Container::bind(
         ShellExecutorInterface::class,

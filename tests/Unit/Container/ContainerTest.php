@@ -16,7 +16,7 @@ use RWatch\IO\ConsoleIO;
 use RWatch\IO\IOInterface;
 
 
-beforeEach(function () {
+beforeEach(function (): void {
     Container::reset();
     Container::bind(
         CommandLineOptionsInterface::class,
@@ -40,32 +40,32 @@ beforeEach(function () {
     );
 });
 
-it('can instantiate and return a CommandLineOptions singleton', function () {
+it('can instantiate and return a CommandLineOptions singleton', function (): void {
     $options = Container::singleton(CommandLineOptionsInterface::class);
     expect($options)->toBeInstanceOf(CommandLineOptions::class);
 });
 
-it('can instantiate and return a Config singleton', function () {
+it('can instantiate and return a Config singleton', function (): void {
     $config = Container::singleton(ConfigInterface::class);
     expect($config)->toBeInstanceOf(Config::class);
 });
 
-it('can instantiate and return a Filesystem singleton', function () {
+it('can instantiate and return a Filesystem singleton', function (): void {
     $filesystem = Container::singleton(FilesystemInterface::class);
     expect($filesystem)->toBeInstanceOf(Filesystem::class);
 });
 
-it('can instantiate and return a ConsoleIO singleton', function () {
+it('can instantiate and return a ConsoleIO singleton', function (): void {
     $io = Container::singleton(IOInterface::class);
     expect($io)->toBeInstanceOf(ConsoleIO::class);
 });
 
-it('can instantiate and return a AppState singleton', function () {
+it('can instantiate and return a AppState singleton', function (): void {
     $appState = Container::singleton(AppStateInterface::class);
     expect($appState)->toBeInstanceOf(AppState::class);
 });
 
-it('can replace the Filesystem and return a TestFilesystem singleton', function () {
+it('can replace the Filesystem and return a TestFilesystem singleton', function (): void {
 
     Container::bind(
         FilesystemInterface::class,
@@ -77,7 +77,7 @@ it('can replace the Filesystem and return a TestFilesystem singleton', function 
     expect($filesystem)->toBeInstanceOf(TestFilesystem::class);
 });
 
-it('can contain a concrete instance of a class', function () {
+it('can contain a concrete instance of a class', function (): void {
     $filesystem = new TestFilesystem();
     Container::bind(
         FilesystemInterface::class,
@@ -88,8 +88,8 @@ it('can contain a concrete instance of a class', function () {
     expect($filesystem2)->toBe($filesystem);
 });
 
-it('throws an exception if the class does not exist', function () {
-    expect(function () {
+it('throws an exception if the class does not exist', function (): void {
+    expect(function (): void {
         Container::bind(
             'NonExistantClass',
             'NonExistantClass',
@@ -97,7 +97,7 @@ it('throws an exception if the class does not exist', function () {
     })->toThrow(InvalidArgumentException::class);
 });
 
-it('throws an exception if the supplied object is not an instance of the class', function () {
+it('throws an exception if the supplied object is not an instance of the class', function (): void {
     $filesystem = new TestFilesystem();
     expect(fn () => Container::bind(
             IOInterface::class,

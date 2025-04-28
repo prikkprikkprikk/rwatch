@@ -6,7 +6,7 @@ use RWatch\App\Contracts\AppStateInterface;
 use RWatch\Config\ConfigInterface;
 use RWatch\Container\Container;
 
-it('can create an AppState object', function () {
+it('can create an AppState object', function (): void {
     $appState = Container::singleton(AppStateInterface::class);
     expect($appState)->toBeInstanceOf(AppStateInterface::class)
         ->and($appState->getServer())->toBe('testServer')
@@ -14,7 +14,7 @@ it('can create an AppState object', function () {
         ->and($appState->getProject())->toBe('testProject');
 });
 
-it('can create an AppState object given a Config object', function () {
+it('can create an AppState object given a Config object', function (): void {
     $config = Container::singleton(ConfigInterface::class);
     $config->loadConfigFromArray([
         'server' => 'customTestServer',
@@ -28,7 +28,7 @@ it('can create an AppState object given a Config object', function () {
         ->and($appState->getProject())->toBe('customTestProject');
 });
 
-it('can set the various properties to new values', function () {
+it('can set the various properties to new values', function (): void {
     $appState = Container::singleton(AppStateInterface::class);
     $appState->setServer('anotherTestServer');
     $appState->setUsername('anotherTestUsername');
