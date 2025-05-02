@@ -2,9 +2,6 @@
 
 use RWatch\Config\Config;
 use RWatch\Config\ConfigFilePath;
-use RWatch\Container\Container;
-use RWatch\Filesystem\Contracts\FilesystemInterface;
-use RWatch\Filesystem\TestFilesystem;
 
 /**
  * This test suite tests the Config class, which is responsible for holding the app's configuration values.

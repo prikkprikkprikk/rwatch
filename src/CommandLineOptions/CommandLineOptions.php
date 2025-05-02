@@ -16,7 +16,10 @@ class CommandLineOptions implements CommandLineOptionsInterface {
     public function __construct(
         private readonly array $optionsWithPatterns = []
     ) {
-        $options = array_map(callback: fn($option) => "$option:", array: array_keys($this->optionsWithPatterns));
+        $options = array_map(
+            callback: fn($option) => "$option:",
+            array: array_keys($this->optionsWithPatterns)
+        );
         $this->validateOptions();
         $this->options = getopt(short_options: '', long_options: $options);
     }
@@ -31,10 +34,10 @@ class CommandLineOptions implements CommandLineOptionsInterface {
 
     public function validateOptions(): void {
         foreach ($this->options as $option => $value) {
-            $pattern = $this->optionsWithPatterns[$option] ?? null;
             if (!is_string($value)) {
                 continue;
             }
+            $pattern = $this->optionsWithPatterns[$option] ?? null;
             if ($pattern && !preg_match($pattern, $value)) {
                 throw new InvalidOptionException(
                     sprintf("Invalid value for option '%s': %s", $option, $value)

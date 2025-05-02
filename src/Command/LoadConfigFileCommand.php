@@ -8,7 +8,6 @@ use RWatch\Command\Contracts\CommandInterface;
 use RWatch\Config\ConfigFile;
 use RWatch\Config\ConfigFilePath;
 use RWatch\Filesystem\Contracts\FilesystemInterface;
-use function Symfony\Component\String\s;
 
 class LoadConfigFileCommand implements CommandInterface {
 
