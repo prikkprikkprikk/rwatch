@@ -8,7 +8,7 @@ use RWatch\Command\Contracts\CommandInterface;
 use RWatch\Container\Container;
 use RWatch\IO\IOInterface;
 
-class AskForServerNameCommand extends ConfigAwareCommand {
+class AskForServerNameCommand implements CommandInterface {
 
     /**
      * Execute the command, and return the next command to be executed,

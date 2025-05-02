@@ -6,6 +6,8 @@ use RWatch\Command\AskForServerNameCommand;
 use RWatch\Config\ConfigFilePath;
 
 it('updates the config with the given server name', function () {
+    //
+})->skip(message: "Not implemented yet");
 
 it('updates the app state with the given server name', function (): void {
     $command = new AskForServerNameCommand();

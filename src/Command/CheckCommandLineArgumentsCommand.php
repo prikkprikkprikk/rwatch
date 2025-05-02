@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RWatch\Command;
 
-use RWatch\IO\IOInterface;
+use RWatch\Command\Contracts\CommandInterface;
 
 class CheckCommandLineArgumentsCommand implements CommandInterface {
 
