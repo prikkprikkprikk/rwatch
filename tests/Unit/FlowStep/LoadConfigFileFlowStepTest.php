@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use RWatch\Command\Contracts\CommandInterface;
-use RWatch\Command\HydrateAppStateCommand;
-use RWatch\Command\LoadConfigFileCommand;
-use RWatch\Command\PauseCommand;
+use RWatch\AppFlow\Contracts\FlowStepInterface;
+use RWatch\AppFlow\HydrateAppStateFlowStep;
+use RWatch\AppFlow\LoadConfigFileFlowStep;
+use RWatch\AppFlow\PauseFlowStep;
 use RWatch\Config\ConfigFilePath;
 use RWatch\Container\Container;
 use RWatch\Filesystem\Contracts\FilesystemInterface;
@@ -33,19 +33,19 @@ it('can load an existing and valid config file', function (): void {
             'contents' => '{}',
         ]
     );
-    $command = new LoadConfigFileCommand($validFilePath);
-    $nextCommand = $command->execute();
-    expect($nextCommand)->toBeInstanceOf(CommandInterface::class);
+    $flowStep = new LoadConfigFileFlowStep($validFilePath);
+    $nextFlowStep = $flowStep->execute();
+    expect($nextFlowStep)->toBeInstanceOf(FlowStepInterface::class);
 });
 
 it('returns a pause command when the config file does not exist', function (): void {
-    $command = new LoadConfigFileCommand(configFilePath: '~/non-existant-config.json');
-    $nextCommand = $command->execute();
-    expect($nextCommand)->toBeInstanceOf(PauseCommand::class);
+    $flowStep = new LoadConfigFileFlowStep(configFilePath: '~/non-existant-config.json');
+    $nextFlowStep = $flowStep->execute();
+    expect($nextFlowStep)->toBeInstanceOf(PauseFlowStep::class);
 });
 
 it('creates a ConfigFilePath with the default config file if none is specified', function (): void {
-    $command = new LoadConfigFileCommand();
+    $flowStep = new LoadConfigFileFlowStep();
     $filesystem = Container::singleton(FilesystemInterface::class);
     $filesystem->setFileConfig(
         getDefaultConfigFilePath(),
@@ -57,6 +57,6 @@ it('creates a ConfigFilePath with the default config file if none is specified',
             'contents' => '{}',
         ]
     );
-    $nextCommand = $command->execute();
-    expect($nextCommand)->toBeInstanceOf(HydrateAppStateCommand::class);
+    $nextFlowStep = $flowStep->execute();
+    expect($nextFlowStep)->toBeInstanceOf(HydrateAppStateFlowStep::class);
 });

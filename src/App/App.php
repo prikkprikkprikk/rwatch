@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace RWatch\App;
 
-use RWatch\Command\LaunchAppCommand;
+use RWatch\AppFlow\LaunchAppFlowStep;
 
 class App {
     public function run(): void {
-        $command = new LaunchAppCommand();
+        $flowStep = new LaunchAppFlowStep();
 
         do {
-            $command = $command->execute();
-        } while ($command);
+            $flowStep = $flowStep->execute();
+        } while ($flowStep);
 
         exit;
     }

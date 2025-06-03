@@ -6,7 +6,7 @@ use RWatch\IO\TestIO;
 
 beforeEach(function (): void {
     // $this->app = new \RWatch\App\App();
-    // $this->command = new \RWatch\Command\CreateConfigFilePromptCommand();
+    // $this->flowStep = new \RWatch\AppFlow\CreateConfigFilePromptFlowStep();
 });
 
 it('exits the program if the answer is negative', function (): void {
@@ -15,14 +15,14 @@ it('exits the program if the answer is negative', function (): void {
         'Create config file? (y/n)' => false
     ]);
 
-    expect($this->command->execute($io))->toBeNull();
+    expect($this->flowStep->execute($io))->toBeNull();
 })->skip(message: 'Not implemented yet');
 
-it('returns the next command if the answer is positive', function (): void {
+it('returns the next flow step if the answer is positive', function (): void {
 
     $io = new TestIO([
         'Create config file? (y/n)' => true
     ]);
 
-    expect($this->command->execute($io))->toBeInstanceOf(\RWatch\Command\AskForServerNameCommand::class);
+    expect($this->flowStep->execute($io))->toBeInstanceOf(\RWatch\AppFlow\AskForServerNameFlowStep::class);
 })->skip(message: 'Not implemented yet');

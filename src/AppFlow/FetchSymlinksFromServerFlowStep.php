@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace RWatch\Command;
+namespace RWatch\AppFlow;
 
 use RWatch\App\App;
 use RWatch\App\Contracts\AppStateInterface;
-use RWatch\Command\Contracts\CommandInterface;
+use RWatch\AppFlow\Contracts\FlowStepInterface;
 use RWatch\Container\Container;
 use RWatch\IO\IOInterface;
 use RWatch\Shell\ShellExecutor;
 use function Laravel\Prompts\select;
 
-class FetchSymlinksFromServerCommand implements CommandInterface {
+class FetchSymlinksFromServerFlowStep implements FlowStepInterface {
     /**
      * @inheritDoc
      */
-    public function execute(): ?CommandInterface {
+    public function execute(): ?FlowStepInterface {
 
         $appState = Container::singleton(AppStateInterface::class);
         $io = Container::singleton(IOInterface::class);
 
         // TODO: Refactor this; it's just copied in from the old App->run() function.
-        // Should probably be separated into several commands.
+        // Should probably be separated into several flow steps.
 
         // Get symlinks from remote server
         $command = sprintf(
@@ -66,6 +66,6 @@ class FetchSymlinksFromServerCommand implements CommandInterface {
 
         $appState->setProject($selectedProject);
 
-        return new StartNpmRunWatchCommand();
+        return new StartNpmRunWatchFlowStep();
     }
 }

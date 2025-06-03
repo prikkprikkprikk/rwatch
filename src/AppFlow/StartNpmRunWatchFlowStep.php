@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace RWatch\Command;
+namespace RWatch\AppFlow;
 
 use RWatch\App\AppState;
 use RWatch\App\Contracts\AppStateInterface;
-use RWatch\Command\Contracts\CommandInterface;
+use RWatch\AppFlow\Contracts\FlowStepInterface;
 use RWatch\Config\ConfigInterface;
 use RWatch\Container\Container;
 use RWatch\IO\IOInterface;
@@ -14,12 +14,12 @@ use RWatch\Shell\Enum\ExitCodes;
 use RWatch\Shell\ShellExecutor;
 use RWatch\Shell\ShellExecutorInterface;
 
-class StartNpmRunWatchCommand implements CommandInterface{
+class StartNpmRunWatchFlowStep implements FlowStepInterface{
 
     /**
      * @inheritDoc
      */
-    public function execute(): ?CommandInterface {
+    public function execute(): ?FlowStepInterface {
 
         $appState = Container::singleton(AppStateInterface::class);
         $project = $appState->getProject();
@@ -33,7 +33,7 @@ class StartNpmRunWatchCommand implements CommandInterface{
                 return null;
             }
 
-            return new FetchSymlinksFromServerCommand();
+            return new FetchSymlinksFromServerFlowStep();
         }
 
         // Using SSH with pseudo-terminal allocation (-t) and cd -P to resolve symlinks
@@ -48,7 +48,7 @@ class StartNpmRunWatchCommand implements CommandInterface{
         $shellExitCode = $shellExecutor->execute($sshStartCommand);
 
         if ($shellExitCode == ExitCodes::SSH_CONNECTION_CLOSED) {
-            return new FetchSymlinksFromServerCommand();
+            return new FetchSymlinksFromServerFlowStep();
         }
 
         $message = "Kunne ikke kjøre 'npm run watch'. Resultatkode: " . $shellExitCode->value
@@ -56,9 +56,9 @@ class StartNpmRunWatchCommand implements CommandInterface{
 
         echo $message . PHP_EOL;
 
-        return new PauseCommand(
+        return new PauseFlowStep(
             message: $message,
-            nextCommand: new FetchSymlinksFromServerCommand()
+            nextFlowStep: new FetchSymlinksFromServerFlowStep()
         );
     }
 

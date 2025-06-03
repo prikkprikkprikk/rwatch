@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace RWatch\Command;
+namespace RWatch\AppFlow;
 
-use RWatch\Command\Contracts\CommandInterface;
+use RWatch\AppFlow\Contracts\FlowStepInterface;
 use RWatch\Config\ConfigFile;
 use RWatch\Config\ConfigFilePath;
 use RWatch\Filesystem\Contracts\FilesystemInterface;
 
-class LoadConfigFileCommand implements CommandInterface {
+class LoadConfigFileFlowStep implements FlowStepInterface {
 
     protected ?string $configFilePathString = null;
     protected ConfigFile $configFile;
     private(set) FilesystemInterface $filesystem;
 
     /**
-     * Creates a LoadConfigFileCommand either from a ConfigFilePath or a file path string.
+     * Creates a LoadConfigFileFlowStep either from a ConfigFilePath or a file path string.
      * If no path is given, try to load from default path.
      *
      * @param ConfigFilePath|string|null $configFilePath
@@ -27,7 +27,7 @@ class LoadConfigFileCommand implements CommandInterface {
     /**
      * @inheritDoc
      */
-    public function execute(): CommandInterface {
+    public function execute(): FlowStepInterface {
         try {
             if ($this->configFilePath === null) {
                 $this->configFilePath = ConfigFilePath::getDefaultConfigFilePath();
@@ -37,8 +37,8 @@ class LoadConfigFileCommand implements CommandInterface {
             }
             $this->configFile = new ConfigFile(configFilePath: $this->configFilePath);
         } catch (\Exception $e) {
-            return new PauseCommand("Failed to load config file: {$e->getMessage()}", null);
+            return new PauseFlowStep("Failed to load config file: {$e->getMessage()}", null);
         }
-        return new HydrateAppStateCommand();
+        return new HydrateAppStateFlowStep();
     }
 }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace RWatch\Command;
+namespace RWatch\AppFlow;
 
-use RWatch\Command\Contracts\CommandInterface;
+use RWatch\AppFlow\Contracts\FlowStepInterface;
 
-class CheckConfigFileOptionCommand implements CommandInterface {
+class CheckConfigFileOptionFlowStep implements FlowStepInterface {
 
     /**
      * As a first step in starting the app, check if there is any command line argument
@@ -14,7 +14,7 @@ class CheckConfigFileOptionCommand implements CommandInterface {
      *
      * @inheritDoc
      */
-    public function execute(): ?CommandInterface {
+    public function execute(): ?FlowStepInterface {
         return null;
     }
 }

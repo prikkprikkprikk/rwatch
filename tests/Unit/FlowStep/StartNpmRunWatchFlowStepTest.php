@@ -3,10 +3,9 @@
 declare(strict_types=1);
 
 use Mockery\MockInterface;
-use RWatch\Command\FetchSymlinksFromServerCommand;
-use RWatch\Command\PauseCommand;
-use RWatch\Command\StartNpmRunWatchCommand;
-use RWatch\IO\TestIO;
+use RWatch\AppFlow\FetchSymlinksFromServerFlowStep;
+use RWatch\AppFlow\PauseFlowStep;
+use RWatch\AppFlow\StartNpmRunWatchFlowStep;
 use RWatch\Shell\Enum\ExitCodes;
 use RWatch\Shell\ShellExecutorInterface;
 
@@ -25,10 +24,10 @@ it('runs `npm run watch`', function (): void {
         ->with('ssh -t testUsername@testServer "cd -P ~/testProject && pwd && npm run watch"')
         ->andReturn(ExitCodes::SSH_CONNECTION_CLOSED);
 
-    $command = new StartNpmRunWatchCommand();
-    $nextCommand = $command->execute();
+    $flowStep = new StartNpmRunWatchFlowStep();
+    $nextFlowStep = $flowStep->execute();
 
-    expect($nextCommand)->toBeInstanceOf(FetchSymlinksFromServerCommand::class);
+    expect($nextFlowStep)->toBeInstanceOf(FetchSymlinksFromServerFlowStep::class);
 });
 
 it('pauses with a message when command fails', function (): void {
@@ -41,8 +40,8 @@ it('pauses with a message when command fails', function (): void {
         ->with('ssh -t testUsername@testServer "cd -P ~/testProject && pwd && npm run watch"')
         ->andReturn(ExitCodes::GENERIC_ERROR);
 
-    $command = new StartNpmRunWatchCommand();
-    $nextCommand = $command->execute();
+    $flowStep = new StartNpmRunWatchFlowStep();
+    $nextFlowStep = $flowStep->execute();
 
-    expect($nextCommand)->toBeInstanceOf(PauseCommand::class);
+    expect($nextFlowStep)->toBeInstanceOf(PauseFlowStep::class);
 });

@@ -50,7 +50,6 @@ composer test
 
 ## Wishlist
 
-- [ ] Rename the app flow steps ("Command" is confusable with Command/Query pattern)
 - [ ] Use a config file instead of command line arguments (WIP)
 - [ ] Prompt the user for the server and username if they are not supplied
 - [ ] Other ways to supply a list of projects (e.g. specifying a directory of projects)

@@ -6,6 +6,6 @@ use RWatch\App\AppState;
 
 it('', function (): void {
 
-    $command = new RWatch\Command\FetchSymlinksFromServerCommand();
+    $flowStep = new RWatch\AppFlow\FetchSymlinksFromServerFlowStep();
 
 })->skip(message: "Not implemented yet");

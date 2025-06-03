@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use RWatch\Command\AskForServerNameCommand;
+use RWatch\AppFlow\AskForServerNameFlowStep;
 use RWatch\Config\ConfigFilePath;
 
 it('updates the config with the given server name', function () {
@@ -10,5 +10,5 @@ it('updates the config with the given server name', function () {
 })->skip(message: "Not implemented yet");
 
 it('updates the app state with the given server name', function (): void {
-    $command = new AskForServerNameCommand();
+    $flowStep = new AskForServerNameFlowStep();
 })->skip(message: "Not implemented yet");
