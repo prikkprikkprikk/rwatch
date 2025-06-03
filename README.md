@@ -22,7 +22,9 @@ composer install
 
 ## Building the executable
 
-To create the standalone executable PHAR file, you first need to install [Box] 
+To create the standalone executable PHAR file, you first need to install [Box](https://github.com/box-project/box/tree/main) as per their documentation.
+
+With Box installed, cd into rwatch's root directory (where the `box.json` file resides) and do:
 
 ```bash
 box compile
