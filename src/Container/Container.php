@@ -32,6 +32,8 @@ class Container {
                     )
                 );
             }
+            // If binding a concrete instance, store it directly in the instances array.
+            self::$instances[$abstract] = $concrete;
         } else {
             if (!is_subclass_of($concrete, $abstract)) {
                 throw new InvalidArgumentException(

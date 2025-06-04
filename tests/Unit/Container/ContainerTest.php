@@ -15,6 +15,9 @@ use RWatch\Filesystem\TestFilesystem;
 use RWatch\IO\ConsoleIO;
 use RWatch\IO\IOInterface;
 
+// Import helper functions from Pest.php
+use function getDefaultConfigFilePath;
+
 
 beforeEach(function (): void {
     Container::reset();
@@ -28,7 +31,7 @@ beforeEach(function (): void {
     );
     Container::bind(
         FilesystemInterface::class,
-        Filesystem::class,
+        TestFilesystem::class,
     );
     Container::bind(
         IOInterface::class,
@@ -37,6 +40,23 @@ beforeEach(function (): void {
     Container::bind(
         AppStateInterface::class,
         AppState::class,
+    );
+
+    // Set up default config file response
+    $filesystem = Container::singleton(FilesystemInterface::class);
+    $filesystem->setFileConfig(
+        getDefaultConfigFilePath(),
+        [
+            'isDirectory' => false,
+            'isFile' => true,
+            'exists' => true,
+            'isReadable' => true,
+            'contents' => '{
+                "server": "testServer",
+                "username": "testUsername",
+                "project": "testProject"
+            }'
+        ]
     );
 });
 
