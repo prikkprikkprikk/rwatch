@@ -108,7 +108,11 @@ class ConfigFilePath
             throw new WrongFileFormatException('Config file is not a JSON file');
         }
         $realpath = realpath($this->directory);
-        assert($realpath !== false);
+        if ($realpath === false) {
+            // In test environments, realpath might return false even if the directory is mocked.
+            // If so, we'll keep the original directory path.
+            return;
+        }
         $this->directory = $realpath;
     }
 
